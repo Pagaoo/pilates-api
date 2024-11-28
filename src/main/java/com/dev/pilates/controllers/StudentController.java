@@ -10,7 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
+import javax.management.relation.RoleNotFoundException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -27,17 +27,11 @@ public class StudentController {
     }
 
     @PostMapping
-    public ResponseEntity<Student> createStudent(@RequestBody @Valid StudentDTO studentDTO) {
+    public ResponseEntity<Student> createStudent(@RequestBody @Valid StudentDTO studentDTO) throws RoleNotFoundException {
         Roles role = rolesRepository.findById(studentDTO.role_id())
-                .orElseThrow(() -> new RuntimeException("Role not found"));
+                .orElseThrow(() -> new RoleNotFoundException("Role not found: " + studentDTO.role_id()));
 
-        Student student = new Student();
-        student.setFirstName(studentDTO.firstName());
-        student.setLastName(studentDTO.lastName());
-        student.setRole_id(role);
-        student.setIs_active(studentDTO.is_active());
-        student.setCreated_at(studentDTO.created_at());
-        student.setUpdated_at(studentDTO.updated_at());
+        Student student = convertoToDTO(studentDTO, role);
         Student savedStudent = studentServices.save(student);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(savedStudent);
@@ -50,5 +44,16 @@ public class StudentController {
         List<StudentDTO> studentDTOs = students.stream().map(Student::toDTO).collect(Collectors.toList());
 
         return ResponseEntity.ok(studentDTOs);
+    }
+
+    private Student convertoToDTO(StudentDTO studentDTO, Roles role) {
+        Student student = new Student();
+        student.setFirstName(studentDTO.firstName());
+        student.setLastName(studentDTO.lastName());
+        student.setRole_id(role);
+        student.setIs_active(studentDTO.is_active());
+        student.setCreated_at(studentDTO.created_at());
+        student.setUpdated_at(studentDTO.updated_at());
+        return student;
     }
 }
