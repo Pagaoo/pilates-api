@@ -52,7 +52,4 @@ public class Student {
                 this.updated_at
         );
     }
-
-
-
 }
