@@ -52,6 +52,12 @@ public class StudentController {
         return ResponseEntity.ok(student);
     }
 
+    @GetMapping("name/{firstName}")
+    public ResponseEntity<List<Student>> getStudentsByFirstName(@PathVariable String firstName) {
+        List<Student> students = studentServices.findStudentByFirstName(firstName);
+        return ResponseEntity.ok(students);
+    }
+
 
     private Student convertoToDTO(StudentDTO studentDTO, Roles role) {
         Student student = new Student();
