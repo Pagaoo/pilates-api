@@ -23,7 +23,7 @@ public class StudentController {
     }
 
     @PostMapping
-    public ResponseEntity<StudentRequestDTO> createStudent(@RequestBody @Valid StudentRequestDTO studentRequestDTO) throws RoleNotFoundException {
+    public ResponseEntity<StudentRequestDTO> createStudent(@RequestBody @Valid StudentRequestDTO studentRequestDTO) {
         StudentRequestDTO savedStudent = studentServices.save(studentRequestDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedStudent);
     }
