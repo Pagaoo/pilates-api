@@ -1,5 +1,7 @@
 package com.dev.pilates.entities;
 
+import com.dev.pilates.dtos.professor.ProfessorDTO;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -28,11 +30,24 @@ public class Professor {
     private String username;
     @Column(length = 20, nullable = false)
     private String password;
-    @OneToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "role_id", nullable = false)
-    private Roles role_id;
+    private Roles role;
     @CreatedDate
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "America/Sao_Paulo")
+    @Column(nullable = false, updatable = false)
     private LocalDateTime created_at;
     @LastModifiedDate
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "America/Sao_Paulo")
+    @Column(nullable = false)
     private LocalDateTime updated_at;
+
+    public ProfessorDTO toProfessorDTO() {
+        return new ProfessorDTO(
+                this.username,
+                this.password,
+                this.role.getId()
+        );
+    }
+
 }
