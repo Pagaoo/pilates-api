@@ -1,5 +1,6 @@
 package com.dev.pilates.services;
 
+import com.dev.pilates.dtos.student.StudentResponseDTO;
 import com.dev.pilates.entities.Student;
 import com.dev.pilates.repositories.StudentRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -25,8 +26,8 @@ public class StudentServices {
         return studentRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Aluno não encontrado"));
     }
 
-    public List<Student> findStudentByFirstName(String firstName) {
-        List<Student> students = studentRepository.findStudentByFirstName(firstName);
+    public List<StudentResponseDTO> findStudentByFirstName(String firstName) {
+        List<StudentResponseDTO> students = studentRepository.findStudentByFirstName(firstName);
 
         if (students.isEmpty()) {
             throw new EntityNotFoundException(String.format("Alunos com nome: '%s' não encontrados", firstName));
@@ -38,7 +39,7 @@ public class StudentServices {
         try {
             return studentRepository.save(student);
         } catch (DataIntegrityViolationException e) {
-            throw new RuntimeException("Erro ao tentar salvar", e.getCause());
+            throw new RuntimeException("Erro ao tentar salvar aluno", e.getCause());
         }
     }
 }

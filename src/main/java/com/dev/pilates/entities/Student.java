@@ -1,6 +1,7 @@
 package com.dev.pilates.entities;
 
-import com.dev.pilates.dtos.StudentDTO;
+import com.dev.pilates.dtos.student.StudentRequestDTO;
+import com.dev.pilates.dtos.student.StudentResponseDTO;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -42,14 +43,23 @@ public class Student {
     private LocalDateTime updated_at;
 
 
-    public StudentDTO toDTO() {
-        return new StudentDTO(
+    public StudentRequestDTO toStudentRequestDTO() {
+        return new StudentRequestDTO(
                 this.firstName,
                 this.lastName,
                 this.role_id.getId(),
                 this.is_active,
                 this.created_at,
                 this.updated_at
+        );
+    }
+
+    public StudentResponseDTO toStudentResponseDTO() {
+        return new StudentResponseDTO(
+                this.firstName,
+                this.lastName,
+                this.role_id.getId(),
+                this.is_active
         );
     }
 }
