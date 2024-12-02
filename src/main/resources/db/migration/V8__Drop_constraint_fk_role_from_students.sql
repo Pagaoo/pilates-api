@@ -1,0 +1,2 @@
+ALTER TABLE students
+DROP CONSTRAINT fk_role;
