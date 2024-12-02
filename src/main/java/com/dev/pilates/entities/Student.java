@@ -31,10 +31,11 @@ public class Student {
     private String lastName;
     @ManyToOne
     @JoinColumn(name = "role_id", nullable = false)
-    private Roles role_id;
+    private Roles role;
     @Column(nullable = false)
     private Boolean is_active;
     @CreatedDate
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "America/Sao_Paulo")
     @Column(updatable = false, nullable = false)
     private LocalDateTime created_at;
     @LastModifiedDate
@@ -47,10 +48,8 @@ public class Student {
         return new StudentRequestDTO(
                 this.firstName,
                 this.lastName,
-                this.role_id.getId(),
-                this.is_active,
-                this.created_at,
-                this.updated_at
+                this.role.getId(),
+                this.is_active
         );
     }
 
@@ -59,7 +58,7 @@ public class Student {
                 this.id,
                 this.firstName,
                 this.lastName,
-                this.role_id.getId(),
+                this.role.getId(),
                 this.is_active
         );
     }
