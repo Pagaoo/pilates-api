@@ -6,6 +6,7 @@ import com.dev.pilates.entities.Roles;
 import com.dev.pilates.entities.Student;
 import com.dev.pilates.repositories.RolesRepository;
 import com.dev.pilates.services.StudentServices;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -41,7 +42,6 @@ public class StudentController {
     @GetMapping
     public ResponseEntity<List<StudentResponseDTO>> getAllStudents() {
         List<Student> students = studentServices.findAll();
-
         List<StudentResponseDTO> studentResponseDTOList = students.stream().map(Student::toStudentResponseDTO).collect(Collectors.toList());
 
         return ResponseEntity.ok(studentResponseDTOList);
@@ -59,6 +59,11 @@ public class StudentController {
         return ResponseEntity.ok(studentResponseDTOList);
     }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteStudentById(@PathVariable long id) {
+        studentServices.deleteStudentById(id);
+        return ResponseEntity.noContent().build();
+    }
 
     private Student convertoToStudentRequestDTO(StudentRequestDTO studentRequestDTO, Roles role) {
         Student student = new Student();

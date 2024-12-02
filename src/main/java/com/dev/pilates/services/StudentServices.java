@@ -42,4 +42,15 @@ public class StudentServices {
             throw new RuntimeException("Erro ao tentar salvar aluno", e.getCause());
         }
     }
+
+    public void deleteStudentById(long id) {
+        if (!studentRepository.existsById(id)) {
+            throw new EntityNotFoundException(String.format("Aluno com ID: %s não encontrado para deleção", id));
+        }
+        try {
+            studentRepository.deleteById(id);
+        } catch (DataIntegrityViolationException e) {
+            throw new RuntimeException("Erro de integridade ao tentar deletar aluno", e);
+        }
+    }
 }

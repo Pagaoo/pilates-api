@@ -29,7 +29,7 @@ public class Student {
     private String firstName;
     @Column(length = 50, nullable = false)
     private String lastName;
-    @OneToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "role_id", nullable = false)
     private Roles role_id;
     @Column(nullable = false)
@@ -56,6 +56,7 @@ public class Student {
 
     public StudentResponseDTO toStudentResponseDTO() {
         return new StudentResponseDTO(
+                this.id,
                 this.firstName,
                 this.lastName,
                 this.role_id.getId(),
