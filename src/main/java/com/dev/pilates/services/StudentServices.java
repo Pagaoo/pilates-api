@@ -52,9 +52,9 @@ public class StudentServices {
             Roles role = rolesRepository.findById(studentRequestDTO.role_id())
                     .orElseThrow(() -> new RoleNotFoundException("Role not found: " + studentRequestDTO.role_id()));
 
-            Student newStudent = convertoToStudentRequestDTO(studentRequestDTO, role);
-            Student savedStudent = studentRepository.save(newStudent);
-            return savedStudent.toStudentRequestDTO();
+            Student newStudentToDto = convertToStudentRequestDTO(studentRequestDTO, role);
+            Student saveStudent = studentRepository.save(newStudentToDto);
+            return saveStudent.toStudentRequestDTO();
         } catch (RoleNotFoundException e) {
             throw new RuntimeException("Erro ao salvar aluno, role de nome: %s não existe", e.getCause());
         }
@@ -72,28 +72,36 @@ public class StudentServices {
     }
 
     public Student updateStudentById(long id, StudentResponseDTO studentResponseDTO) {
-        Student existingStudent = studentRepository.findById(id).orElseThrow(() ->
-                new EntityNotFoundException(String.format("Aluno de id: %s não encontrado", id)));
+        StudentResponseDTO existingStudent = findById(id);
 
-        existingStudent.setFirstName(studentResponseDTO.firstName());
-        existingStudent.setLastName(studentResponseDTO.lastName());
         Roles role  = rolesRepository.findById(studentResponseDTO.role_id()).orElseThrow(() ->
                 new EntityNotFoundException(String.format("Role de id: %s não encontrada", studentResponseDTO.role_id())));
-        existingStudent.setRole(role);
-        existingStudent.setIs_active(studentResponseDTO.is_active());
-        existingStudent.setUpdated_at(LocalDateTime.now());
-        return studentRepository.save(existingStudent);
+
+        Student studentToUpdate = convertToStudentResponseDTO(existingStudent,role);
+        Student updatedStudent = studentRepository.save(studentToUpdate);
+        return studentRepository.save(updatedStudent);
     }
 
 
-    private Student convertoToStudentRequestDTO(StudentRequestDTO studentRequestDTO, Roles role) {
-        Student student = new Student();
-        student.setFirstName(studentRequestDTO.firstName());
-        student.setLastName(studentRequestDTO.lastName());
-        student.setRole(role);
-        student.setIs_active(studentRequestDTO.is_active());
-        student.setCreated_at(LocalDateTime.now());
-        student.setUpdated_at(LocalDateTime.now());
-        return student;
+    private Student convertToStudentRequestDTO(StudentRequestDTO studentRequestDTO, Roles role) {
+        Student studentRequest = new Student();
+        studentRequest.setFirstName(studentRequestDTO.firstName());
+        studentRequest.setLastName(studentRequestDTO.lastName());
+        studentRequest.setRole(role);
+        studentRequest.setIs_active(studentRequestDTO.is_active());
+        studentRequest.setCreated_at(LocalDateTime.now());
+        studentRequest.setUpdated_at(LocalDateTime.now());
+        return studentRequest;
+    }
+
+    private Student convertToStudentResponseDTO(StudentResponseDTO studentResponseDTO, Roles role) {
+        Student studentResponse = new Student();
+        studentResponse.setId(studentResponseDTO.id());
+        studentResponse.setFirstName(studentResponseDTO.firstName());
+        studentResponse.setLastName(studentResponseDTO.lastName());
+        studentResponse.setRole(role);
+        studentResponse.setIs_active(studentResponseDTO.is_active());
+        studentResponse.setUpdated_at(LocalDateTime.now());
+        return studentResponse;
     }
 }
