@@ -6,7 +6,6 @@ import com.dev.pilates.entities.Roles;
 import com.dev.pilates.entities.Student;
 import com.dev.pilates.repositories.RolesRepository;
 import com.dev.pilates.services.StudentServices;
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
