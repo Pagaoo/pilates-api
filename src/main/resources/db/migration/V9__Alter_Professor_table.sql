@@ -1,0 +1,1 @@
+ALTER TABLE professors ALTER COLUMN password TYPE VARCHAR(60);
