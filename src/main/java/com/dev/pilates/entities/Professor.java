@@ -28,7 +28,7 @@ public class Professor {
     private Long id;
     @Column(length = 50, nullable = false)
     private String username;
-    @Column(length = 20, nullable = false)
+    @Column(length = 60, nullable = false)
     private String password;
     @ManyToOne
     @JoinColumn(name = "role_id", nullable = false)

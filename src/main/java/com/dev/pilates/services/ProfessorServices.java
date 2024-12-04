@@ -8,6 +8,7 @@ import com.dev.pilates.repositories.RolesRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -19,10 +20,12 @@ import java.util.stream.Collectors;
 public class ProfessorServices {
     private final ProfessorRepository professorRepository;
     private final RolesRepository rolesRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public ProfessorServices(ProfessorRepository professorRepository, RolesRepository rolesRepository) {
+    public ProfessorServices(ProfessorRepository professorRepository, RolesRepository rolesRepository, PasswordEncoder passwordEncoder) {
         this.professorRepository = professorRepository;
         this.rolesRepository = rolesRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public List<ProfessorDTO> findAll() {
@@ -62,7 +65,7 @@ public class ProfessorServices {
     private Professor convertToProfessorDTO(ProfessorDTO professorDTO, Roles roles) {
         Professor professorRequest = new Professor();
         professorRequest.setUsername(professorDTO.username());
-        professorRequest.setPassword(professorDTO.password());
+        professorRequest.setPassword(passwordEncoder.encode(professorDTO.password()));
         professorRequest.setRole(roles);
         professorRequest.setCreated_at(LocalDateTime.now());
         professorRequest.setUpdated_at(LocalDateTime.now());
