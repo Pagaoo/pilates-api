@@ -1,4 +1,4 @@
-package com.dev.pilates.services;
+package com.dev.pilates.services.professor;
 
 import com.dev.pilates.dtos.professor.ProfessorDTO;
 import com.dev.pilates.entities.Professor;
@@ -40,8 +40,8 @@ public class ProfessorServices {
         return professor.toProfessorDTO();
     }
 
-    public List<ProfessorDTO> findProfessorByName(String username) {
-        List<ProfessorDTO> professorDTOSList = professorRepository.findProfessorByUsername(username);
+    public List<ProfessorDTO> findProfessorsByName(String username) {
+        List<ProfessorDTO> professorDTOSList = professorRepository.findProfessorsByUsername(username);
 
         if (professorDTOSList.isEmpty()) {
             return new ArrayList<>();
@@ -59,6 +59,15 @@ public class ProfessorServices {
             return newProfessor.toProfessorDTO();
         } catch (DataIntegrityViolationException e) {
             throw new DataIntegrityViolationException("Erro de integridade ao criar professor", e.getCause());
+        }
+    }
+
+    public Professor findProfessorByUsername(String username) {
+        try {
+            Professor professor = professorRepository.findProfessorByUsername(username);
+            return professor;
+        } catch (EntityNotFoundException e) {
+            throw new EntityNotFoundException("Professor não encontrado");
         }
     }
 

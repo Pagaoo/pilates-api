@@ -1,4 +1,4 @@
-package com.dev.pilates.services;
+package com.dev.pilates.services.student;
 
 import com.dev.pilates.dtos.student.StudentRequestDTO;
 import com.dev.pilates.dtos.student.StudentResponseDTO;
@@ -71,7 +71,7 @@ public class StudentServices {
         }
     }
 
-    public Student updateStudentById(long id, StudentResponseDTO studentResponseDTO) {
+    public StudentRequestDTO updateStudentById(long id, StudentResponseDTO studentResponseDTO) {
         StudentResponseDTO existingStudent = findById(id);
 
         Roles role  = rolesRepository.findById(studentResponseDTO.role_id()).orElseThrow(() ->
@@ -79,7 +79,7 @@ public class StudentServices {
 
         Student studentToUpdate = convertToStudentResponseDTO(existingStudent,role);
         Student updatedStudent = studentRepository.save(studentToUpdate);
-        return studentRepository.save(updatedStudent);
+        return studentRepository.save(updatedStudent).toStudentRequestDTO();
     }
 
 
