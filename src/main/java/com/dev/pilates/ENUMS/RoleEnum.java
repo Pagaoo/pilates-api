@@ -1,7 +1,7 @@
 package com.dev.pilates.ENUMS;
 
 public enum RoleEnum {
-    ADMIN,
-    PROFESSOR,
-    ALUNO
+    ROLE_ADMIN,
+    ROLE_PROFESSOR,
+    ROLE_ALUNO
 }
