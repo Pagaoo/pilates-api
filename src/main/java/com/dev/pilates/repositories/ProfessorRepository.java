@@ -9,5 +9,6 @@ import java.util.List;
 
 @Repository
 public interface ProfessorRepository extends JpaRepository<Professor, Long> {
-    List<ProfessorDTO> findProfessorByUsername(String username);
+    List<ProfessorDTO> findProfessorsByUsername(String username);
+    Professor findProfessorByUsername(String username);
 }

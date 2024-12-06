@@ -1,7 +1,7 @@
 package com.dev.pilates.controllers;
 
 import com.dev.pilates.dtos.professor.ProfessorDTO;
-import com.dev.pilates.services.ProfessorServices;
+import com.dev.pilates.services.professor.ProfessorServices;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

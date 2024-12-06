@@ -3,10 +3,11 @@ package com.dev.pilates.controllers;
 import com.dev.pilates.dtos.student.StudentRequestDTO;
 import com.dev.pilates.dtos.student.StudentResponseDTO;
 import com.dev.pilates.entities.Student;
-import com.dev.pilates.services.StudentServices;
+import com.dev.pilates.services.student.StudentServices;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,12 +22,14 @@ public class StudentController {
         this.studentServices = studentServices;
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_PROFESSOR')")
     @PostMapping
     public ResponseEntity<StudentRequestDTO> createStudent(@RequestBody @Valid StudentRequestDTO studentRequestDTO) {
         StudentRequestDTO savedStudent = studentServices.save(studentRequestDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedStudent);
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_PROFESSOR')")
     @GetMapping
     public ResponseEntity<List<StudentResponseDTO>> getAllStudents() {
         List<StudentResponseDTO> students = studentServices.findAll();
@@ -46,8 +49,8 @@ public class StudentController {
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<Student> updateStudent(@PathVariable @RequestBody Long id, StudentResponseDTO student) {
-        Student studentToBeUpdated = studentServices.updateStudentById(id, student);
+    public ResponseEntity<StudentRequestDTO> updateStudent(@PathVariable @RequestBody Long id, StudentResponseDTO student) {
+        StudentRequestDTO studentToBeUpdated = studentServices.updateStudentById(id, student);
         return ResponseEntity.ok(studentToBeUpdated);
     }
 
