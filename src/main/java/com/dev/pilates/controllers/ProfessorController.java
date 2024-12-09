@@ -5,6 +5,7 @@ import com.dev.pilates.services.professor.ProfessorServices;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,13 +20,14 @@ public class ProfessorController {
         this.professorServices = professorServices;
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping
     public ResponseEntity<ProfessorDTO> createProfessor(@RequestBody @Valid ProfessorDTO professorDTO) {
         ProfessorDTO newProfessor = professorServices.save(professorDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(newProfessor);
     }
 
-
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_PROFESSOR')")
     @GetMapping
     public ResponseEntity<List<ProfessorDTO>> getAllProfessors() {
         List<ProfessorDTO> professorDTOList = professorServices.findAll();
