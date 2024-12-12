@@ -22,14 +22,14 @@ public class StudentController {
         this.studentServices = studentServices;
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_PROFESSOR')")
+    @PreAuthorize(value = "hasAnyRole('ROLE_ADMIN', 'ROLE_PROFESSOR')")
     @PostMapping
     public ResponseEntity<StudentRequestDTO> createStudent(@RequestBody @Valid StudentRequestDTO studentRequestDTO) {
         StudentRequestDTO savedStudent = studentServices.save(studentRequestDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedStudent);
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_PROFESSOR')")
+    @PreAuthorize(value = "hasAnyRole('ROLE_ADMIN', 'ROLE_PROFESSOR')")
     @GetMapping
     public ResponseEntity<List<StudentResponseDTO>> getAllStudents() {
         List<StudentResponseDTO> students = studentServices.findAll();

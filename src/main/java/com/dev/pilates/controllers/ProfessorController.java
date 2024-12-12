@@ -20,14 +20,14 @@ public class ProfessorController {
         this.professorServices = professorServices;
     }
 
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize(value = "hasRole('ROLE_ADMIN')")
     @PostMapping
     public ResponseEntity<ProfessorDTO> createProfessor(@RequestBody @Valid ProfessorDTO professorDTO) {
         ProfessorDTO newProfessor = professorServices.save(professorDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(newProfessor);
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_PROFESSOR')")
+    @PreAuthorize(value = "hasAnyRole('ROLE_ADMIN', 'ROLE_PROFESSOR')")
     @GetMapping
     public ResponseEntity<List<ProfessorDTO>> getAllProfessors() {
         List<ProfessorDTO> professorDTOList = professorServices.findAll();
