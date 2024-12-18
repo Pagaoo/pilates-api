@@ -48,12 +48,12 @@ public class StudentController {
         return ResponseEntity.ok(studentResponseDTOList);
     }
 
+    //ver pq não ta funcionando
     @PatchMapping("/{id}")
     public ResponseEntity<StudentRequestDTO> updateStudent(@PathVariable @RequestBody Long id, StudentResponseDTO student) {
         StudentRequestDTO studentToBeUpdated = studentServices.updateStudentById(id, student);
         return ResponseEntity.ok(studentToBeUpdated);
     }
-
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteStudentById(@PathVariable long id) {

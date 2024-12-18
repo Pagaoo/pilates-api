@@ -28,8 +28,7 @@ public class StudentServices {
 
     public List<StudentResponseDTO> findAll() {
         List<Student> students = studentRepository.findAll();
-        List<StudentResponseDTO> studentResponseDTOList = students.stream().map(Student::toStudentResponseDTO).collect(Collectors.toList());
-        return studentResponseDTOList;
+        return students.stream().map(Student::toStudentResponseDTO).collect(Collectors.toList());
     }
 
     public StudentResponseDTO findById(long id) {
@@ -38,6 +37,10 @@ public class StudentServices {
         return student.toStudentResponseDTO();
     }
 
+    //ajeitar para voltar uma lista de alunos que tenham a string pesquisada no nome.
+    // Exemplo: Joao, voltar joao pedro, joao vitor.
+    // Exemplo 2: an, voltar ana, anastacia e etc
+    //
     public List<StudentResponseDTO> findStudentByFirstName(String firstName) {
         List<StudentResponseDTO> students = studentRepository.findStudentByFirstName(firstName);
 
@@ -71,6 +74,8 @@ public class StudentServices {
         }
     }
 
+
+    //ver pq não ta funcionando
     public StudentRequestDTO updateStudentById(long id, StudentResponseDTO studentResponseDTO) {
         StudentResponseDTO existingStudent = findById(id);
 
