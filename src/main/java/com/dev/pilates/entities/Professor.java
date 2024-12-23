@@ -47,7 +47,7 @@ public class Professor {
     public ProfessorDTO toProfessorDTO() {
         return new ProfessorDTO(
                 this.username,
-                this.password,
+                this.email,
                 this.role.getId()
         );
     }
