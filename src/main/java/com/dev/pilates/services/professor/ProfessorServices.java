@@ -74,7 +74,7 @@ public class ProfessorServices {
     private Professor convertToProfessorDTO(ProfessorDTO professorDTO, Roles roles) {
         Professor professorRequest = new Professor();
         professorRequest.setUsername(professorDTO.username());
-        professorRequest.setPassword(passwordEncoder.encode(professorDTO.password()));
+        professorRequest.setEmail(professorDTO.email());
         professorRequest.setRole(roles);
         professorRequest.setCreated_at(LocalDateTime.now());
         professorRequest.setUpdated_at(LocalDateTime.now());
