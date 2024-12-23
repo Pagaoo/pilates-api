@@ -25,6 +25,19 @@ public class ProfessorServices {
         this.rolesRepository = rolesRepository;
     }
 
+    public ProfessorRequestDTO save(@Valid ProfessorRequestDTO professorDTO) {
+        try {
+            Roles role = rolesRepository.findById(professorDTO.role_id()).orElseThrow(() ->
+                    new EntityNotFoundException(String.format("Role de id: %s não encontrada", professorDTO.role_id())));
+            Professor newProfessor = professorDTO.toProfessor(role);
+            professorRepository.save(newProfessor);
+            return newProfessor.toProfessorRequestDTO();
+        } catch (DataIntegrityViolationException e) {
+            throw new DataIntegrityViolationException("Erro de integridade ao criar professor", e.getCause());
+        }
+    }
+
+
     public List<ProfessorResponseDTO> findAll() {
         List<Professor> professorList = professorRepository.findAll();
         List<ProfessorResponseDTO> professorDTOList = professorList.stream().map(Professor::toProfessorResponseDTO).collect(Collectors.toList());
@@ -45,18 +58,6 @@ public class ProfessorServices {
         }
 
         return professorDTOSList;
-    }
-
-    public ProfessorRequestDTO save(@Valid ProfessorRequestDTO professorDTO) {
-        try {
-            Roles role = rolesRepository.findById(professorDTO.role_id()).orElseThrow(() ->
-                    new EntityNotFoundException(String.format("Role de id: %s não encontrada", professorDTO.role_id())));
-            Professor newProfessor = professorDTO.toProfessor(role);
-            professorRepository.save(newProfessor);
-            return newProfessor.toProfessorRequestDTO();
-        } catch (DataIntegrityViolationException e) {
-            throw new DataIntegrityViolationException("Erro de integridade ao criar professor", e.getCause());
-        }
     }
 
     public Professor findProfessorByUsername(String username) {

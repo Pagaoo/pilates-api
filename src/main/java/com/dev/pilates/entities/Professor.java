@@ -56,8 +56,8 @@ public class Professor {
     public ProfessorRequestDTO toProfessorRequestDTO() {
         return new ProfessorRequestDTO(
                 this.username,
-                this.password,
                 this.email,
+                this.password,
                 this.role.getId()
         );
     }
