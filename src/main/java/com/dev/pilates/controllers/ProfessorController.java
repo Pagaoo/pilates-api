@@ -1,6 +1,7 @@
 package com.dev.pilates.controllers;
 
-import com.dev.pilates.dtos.professor.ProfessorDTO;
+import com.dev.pilates.dtos.professor.ProfessorRequestDTO;
+import com.dev.pilates.dtos.professor.ProfessorResponseDTO;
 import com.dev.pilates.services.professor.ProfessorServices;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -22,21 +23,21 @@ public class ProfessorController {
 
     @PreAuthorize(value = "hasRole('ROLE_ADMIN')")
     @PostMapping
-    public ResponseEntity<ProfessorDTO> createProfessor(@RequestBody @Valid ProfessorDTO professorDTO) {
-        ProfessorDTO newProfessor = professorServices.save(professorDTO);
+    public ResponseEntity<ProfessorRequestDTO> createProfessor(@RequestBody @Valid ProfessorRequestDTO professorDTO) {
+        ProfessorRequestDTO newProfessor = professorServices.save(professorDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(newProfessor);
     }
 
     @PreAuthorize(value = "hasAnyRole('ROLE_ADMIN', 'ROLE_PROFESSOR')")
     @GetMapping
-    public ResponseEntity<List<ProfessorDTO>> getAllProfessors() {
-        List<ProfessorDTO> professorDTOList = professorServices.findAll();
+    public ResponseEntity<List<ProfessorResponseDTO>> getAllProfessors() {
+        List<ProfessorResponseDTO> professorDTOList = professorServices.findAll();
         return ResponseEntity.ok(professorDTOList);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ProfessorDTO> getProfessorById(@PathVariable long id) {
-        ProfessorDTO professorDTO = professorServices.findProfessorById(id);
+    public ResponseEntity<ProfessorResponseDTO> getProfessorById(@PathVariable long id) {
+        ProfessorResponseDTO professorDTO = professorServices.findProfessorById(id);
         return ResponseEntity.ok(professorDTO);
     }
 }
