@@ -12,6 +12,6 @@ import java.util.List;
 @Repository
 public interface StudentRepository extends JpaRepository<Student, Long> {
 
-    @Query("SELECT studentName FROM Student studentName WHERE studentName.firstName = :firstName")
+    @Query("SELECT studentName FROM Student studentName WHERE studentName.firstName LIKE '%' || LOWER(:firstName) || '%'")
     List<StudentResponseDTO> findStudentByFirstName(@Param("firstName") String firstName);
 }

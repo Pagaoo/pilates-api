@@ -36,10 +36,6 @@ public class StudentServices {
         return student.toStudentResponseDTO();
     }
 
-    //ajeitar para voltar uma lista de alunos que tenham a string pesquisada no nome.
-    // Exemplo: Joao, voltar joao pedro, joao vitor.
-    // Exemplo 2: an, voltar ana, anastacia e etc
-    //
     public List<StudentResponseDTO> findStudentByFirstName(String firstName) {
         List<StudentResponseDTO> students = studentRepository.findStudentByFirstName(firstName);
 
@@ -69,8 +65,7 @@ public class StudentServices {
             throw new RuntimeException("Erro de integridade ao tentar deletar aluno", e);
         }
     }
-
-
+    
     public StudentRequestDTO updateStudentById(long id, StudentRequestDTO studentRequestDTO) {
         Student existingStudent = studentRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Aluno não encontrado"));
 
