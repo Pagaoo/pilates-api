@@ -28,6 +28,8 @@ public class Professor {
     private Long id;
     @Column(length = 50, nullable = false)
     private String username;
+    @Column(length = 100, nullable = false)
+    private String email;
     @Column(length = 60, nullable = false)
     private String password;
     @ManyToOne
