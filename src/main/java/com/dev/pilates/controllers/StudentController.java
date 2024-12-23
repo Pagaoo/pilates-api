@@ -36,25 +36,28 @@ public class StudentController {
         return ResponseEntity.ok(students);
     }
 
+    @PreAuthorize(value = "hasAnyRole('ROLE_ADMIN', 'ROLE_PROFESSOR')")
     @GetMapping("/{id}")
     public ResponseEntity<StudentResponseDTO> getStudentById(@PathVariable long id) {
-        StudentResponseDTO student =  studentServices.findById(id);
+        StudentResponseDTO student =  studentServices.findStudentById(id);
         return ResponseEntity.ok(student);
     }
 
+    @PreAuthorize(value = "hasAnyRole('ROLE_ADMIN', 'ROLE_PROFESSOR')")
     @GetMapping("name/{firstName}")
     public ResponseEntity<List<StudentResponseDTO>> getStudentsByFirstName(@PathVariable String firstName) {
         List<StudentResponseDTO> studentResponseDTOList = studentServices.findStudentByFirstName(firstName);
         return ResponseEntity.ok(studentResponseDTOList);
     }
 
-    //ver pq não ta funcionando
+    @PreAuthorize(value = "hasAnyRole('ROLE_ADMIN', 'ROLE_PROFESSOR')")
     @PatchMapping("/{id}")
-    public ResponseEntity<StudentRequestDTO> updateStudent(@PathVariable @RequestBody Long id, StudentResponseDTO student) {
+    public ResponseEntity<StudentRequestDTO> updateStudent(@PathVariable @RequestBody Long id, StudentRequestDTO student) {
         StudentRequestDTO studentToBeUpdated = studentServices.updateStudentById(id, student);
         return ResponseEntity.ok(studentToBeUpdated);
     }
 
+    @PreAuthorize(value = "hasAnyRole('ROLE_ADMIN', 'ROLE_PROFESSOR')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteStudentById(@PathVariable long id) {
         studentServices.deleteStudentById(id);

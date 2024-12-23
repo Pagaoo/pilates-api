@@ -8,6 +8,7 @@ import com.dev.pilates.repositories.RolesRepository;
 import com.dev.pilates.repositories.StudentRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
+import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
@@ -29,7 +30,7 @@ public class StudentServices {
         return students.stream().map(Student::toStudentResponseDTO).collect(Collectors.toList());
     }
 
-    public StudentResponseDTO findById(long id) {
+    public StudentResponseDTO findStudentById(long id) {
         Student student = studentRepository.findById(id).orElseThrow(() ->
                 new EntityNotFoundException("Aluno não encontrado"));
         return student.toStudentResponseDTO();
@@ -50,9 +51,9 @@ public class StudentServices {
 
     public StudentRequestDTO save(@Valid StudentRequestDTO studentRequestDTO) {
         try {
-            Student newStudentToDto = convertToStudentRequestDTO(studentRequestDTO);
-            Student saveStudent = studentRepository.save(newStudentToDto);
-            return saveStudent.toStudentRequestDTO();
+            Student newStudent = studentRequestDTO.toStudent();
+            Student savedStudent = studentRepository.save(newStudent);
+            return savedStudent.toStudentRequestDTO();
         } catch (RuntimeException e) {
             throw new RuntimeException("Erro ao salvar aluno", e.getCause());
         }
@@ -70,33 +71,13 @@ public class StudentServices {
     }
 
 
-    //ver pq não ta funcionando
-    public StudentRequestDTO updateStudentById(long id, StudentResponseDTO studentResponseDTO) {
-        StudentResponseDTO existingStudent = findById(id);
+    public StudentRequestDTO updateStudentById(long id, StudentRequestDTO studentRequestDTO) {
+        Student existingStudent = studentRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Aluno não encontrado"));
 
-        Student studentToUpdate = convertToStudentResponseDTO(existingStudent);
-        Student updatedStudent = studentRepository.save(studentToUpdate);
-        return studentRepository.save(updatedStudent).toStudentRequestDTO();
+        BeanUtils.copyProperties(studentRequestDTO, existingStudent, "id", "created_at");
+        existingStudent.setUpdated_at(LocalDateTime.now());
+        Student updateStudent = studentRepository.save(existingStudent);
+        return updateStudent.toStudentRequestDTO();
     }
 
-
-    private Student convertToStudentRequestDTO(StudentRequestDTO studentRequestDTO) {
-        Student studentRequest = new Student();
-        studentRequest.setFirstName(studentRequestDTO.firstName());
-        studentRequest.setLastName(studentRequestDTO.lastName());
-        studentRequest.setIs_active(studentRequestDTO.is_active());
-        studentRequest.setCreated_at(LocalDateTime.now());
-        studentRequest.setUpdated_at(LocalDateTime.now());
-        return studentRequest;
-    }
-
-    private Student convertToStudentResponseDTO(StudentResponseDTO studentResponseDTO) {
-        Student studentResponse = new Student();
-        studentResponse.setId(studentResponseDTO.id());
-        studentResponse.setFirstName(studentResponseDTO.firstName());
-        studentResponse.setLastName(studentResponseDTO.lastName());
-        studentResponse.setIs_active(studentResponseDTO.is_active());
-        studentResponse.setUpdated_at(LocalDateTime.now());
-        return studentResponse;
-    }
 }
