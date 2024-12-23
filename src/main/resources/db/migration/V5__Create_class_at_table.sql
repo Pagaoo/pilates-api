@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS classes (
+CREATE TABLE IF NOT EXISTS class_at (
     id BIGSERIAL PRIMARY KEY,
     class_id BIGINT NOT NULL,
     student_id BIGINT NOT NULL,
