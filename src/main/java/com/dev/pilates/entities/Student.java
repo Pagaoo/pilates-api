@@ -29,9 +29,6 @@ public class Student {
     private String firstName;
     @Column(length = 50, nullable = false)
     private String lastName;
-    @ManyToOne
-    @JoinColumn(name = "role_id", nullable = false)
-    private Roles role;
     @Column(nullable = false)
     private Boolean is_active;
     @CreatedDate
@@ -48,7 +45,6 @@ public class Student {
         return new StudentRequestDTO(
                 this.firstName,
                 this.lastName,
-                this.role.getId(),
                 this.is_active
         );
     }
@@ -58,7 +54,6 @@ public class Student {
                 this.id,
                 this.firstName,
                 this.lastName,
-                this.role.getId(),
                 this.is_active
         );
     }

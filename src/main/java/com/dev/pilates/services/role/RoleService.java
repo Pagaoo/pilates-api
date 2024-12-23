@@ -9,8 +9,7 @@ public class RoleService {
     public String getRoleNameById(long id) {
         switch ((int) id) {
             case 3: return RoleEnum.ROLE_PROFESSOR.toString();
-            case 2: return RoleEnum.ROLE_ADMIN.toString();
-            default: return RoleEnum.ROLE_ALUNO.toString();
+            default: return RoleEnum.ROLE_ADMIN.toString();
         }
     }
 }
