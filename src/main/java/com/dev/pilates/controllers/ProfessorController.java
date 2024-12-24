@@ -35,9 +35,24 @@ public class ProfessorController {
         return ResponseEntity.ok(professorDTOList);
     }
 
+    @PreAuthorize(value = "hasAnyRole('ROLE_ADMIN', 'ROLE_PROFESSOR')")
     @GetMapping("/{id}")
     public ResponseEntity<ProfessorResponseDTO> getProfessorById(@PathVariable long id) {
         ProfessorResponseDTO professorDTO = professorServices.findProfessorById(id);
         return ResponseEntity.ok(professorDTO);
+    }
+
+    @PreAuthorize(value = "hasAnyRole('ROLE_ADMIN', 'ROLE_PROFESSOR')")
+    @GetMapping("email/{email}")
+    public ResponseEntity<ProfessorResponseDTO> getProfessorByEmail(@PathVariable String email) {
+        ProfessorResponseDTO professorResponseDTO = professorServices.findProfessorByEmail(email);
+        return ResponseEntity.ok(professorResponseDTO);
+    }
+
+    @PreAuthorize(value = "hasAnyRole('ROLE_ADMIN', 'ROLE_PROFESSOR')")
+    @GetMapping("username/{username}")
+    public ResponseEntity<List<ProfessorResponseDTO>> getProfessorByUsername(@PathVariable String username) {
+        List<ProfessorResponseDTO> professorResponseDTO = professorServices.findProfessorsByName(username);
+        return ResponseEntity.ok(professorResponseDTO);
     }
 }

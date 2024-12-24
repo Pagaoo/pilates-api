@@ -6,9 +6,11 @@ import com.dev.pilates.entities.Professor;
 import com.dev.pilates.entities.Roles;
 import com.dev.pilates.repositories.ProfessorRepository;
 import com.dev.pilates.repositories.RolesRepository;
+import com.dev.pilates.specifications.ProfessorSpecifications;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -37,7 +39,6 @@ public class ProfessorServices {
         }
     }
 
-
     public List<ProfessorResponseDTO> findAll() {
         List<Professor> professorList = professorRepository.findAll();
         List<ProfessorResponseDTO> professorDTOList = professorList.stream().map(Professor::toProfessorResponseDTO).collect(Collectors.toList());
@@ -51,21 +52,12 @@ public class ProfessorServices {
     }
 
     public List<ProfessorResponseDTO> findProfessorsByName(String username) {
-        List<ProfessorResponseDTO> professorDTOSList = professorRepository.findProfessorsByUsername(username);
-
-        if (professorDTOSList.isEmpty()) {
-            return new ArrayList<>();
-        }
-
-        return professorDTOSList;
+        Specification<Professor> specification = ProfessorSpecifications.usernameContainsIgnoreCase(username);
+        return professorRepository.findAll(specification).stream().map(Professor::toProfessorResponseDTO).collect(Collectors.toList());
     }
 
-    public Professor findProfessorByUsername(String username) {
-        try {
-            Professor professor = professorRepository.findProfessorByUsername(username);
-            return professor;
-        } catch (EntityNotFoundException e) {
-            throw new EntityNotFoundException("Professor não encontrado");
-        }
+    public ProfessorResponseDTO findProfessorByEmail(String email) {
+        Professor professor = professorRepository.findProfessorByEmail(email);
+        return professor.toProfessorResponseDTO();
     }
 }
