@@ -1,0 +1,1 @@
+ALTER TABLE professors ADD CONSTRAINT unique_email UNIQUE (email)
