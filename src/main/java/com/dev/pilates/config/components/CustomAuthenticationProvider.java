@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 @Component
 public class CustomAuthenticationProvider implements AuthenticationProvider {
@@ -29,13 +30,15 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-        final String username = authentication.getName();
+        //final String username = authentication.getName();
+        final String email = authentication.getName();
         final String password = authentication.getCredentials().toString();
 
-        Professor professor = professorRepository.findProfessorByUsername(username);
+        //Professor professor = professorRepository.findProfessorByUsername(username);
+        Professor professor = professorRepository.findProfessorByEmail(email);
 
-        if (professor == null) {
-            throw new BadCredentialsException("Senha ou usuário inválido");
+        if (!Objects.equals(professor.getEmail(), email)) {
+            throw new BadCredentialsException("Usuário ou senha inválido");
         }
 
         if (!BCrypt.checkpw(password, professor.getPassword())) {
