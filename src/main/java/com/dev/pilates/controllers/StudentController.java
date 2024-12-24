@@ -2,7 +2,6 @@ package com.dev.pilates.controllers;
 
 import com.dev.pilates.dtos.student.StudentRequestDTO;
 import com.dev.pilates.dtos.student.StudentResponseDTO;
-import com.dev.pilates.entities.Student;
 import com.dev.pilates.services.student.StudentServices;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -46,7 +45,7 @@ public class StudentController {
     @PreAuthorize(value = "hasAnyRole('ROLE_ADMIN', 'ROLE_PROFESSOR')")
     @GetMapping("name/{firstName}")
     public ResponseEntity<List<StudentResponseDTO>> getStudentsByFirstName(@PathVariable String firstName) {
-        List<StudentResponseDTO> studentResponseDTOList = studentServices.findStudentByFirstName(firstName);
+        List<StudentResponseDTO> studentResponseDTOList = studentServices.findStudentsByName(firstName);
         return ResponseEntity.ok(studentResponseDTOList);
     }
 

@@ -2,17 +2,16 @@ package com.dev.pilates.services.student;
 
 import com.dev.pilates.dtos.student.StudentRequestDTO;
 import com.dev.pilates.dtos.student.StudentResponseDTO;
-import com.dev.pilates.entities.Roles;
 import com.dev.pilates.entities.Student;
-import com.dev.pilates.repositories.RolesRepository;
 import com.dev.pilates.repositories.StudentRepository;
+import com.dev.pilates.specifications.StudentSpecifications;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import javax.management.relation.RoleNotFoundException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -36,13 +35,9 @@ public class StudentServices {
         return student.toStudentResponseDTO();
     }
 
-    public List<StudentResponseDTO> findStudentByFirstName(String firstName) {
-        List<StudentResponseDTO> students = studentRepository.findStudentByFirstName(firstName);
-
-        if (students.isEmpty()) {
-            throw new EntityNotFoundException(String.format("Alunos com nome: '%s' não encontrados", firstName));
-        }
-        return students;
+    public List<StudentResponseDTO> findStudentsByName(String name) {
+        Specification<Student> specification = StudentSpecifications.studentNameContainsIgnoreCase(name);
+        return studentRepository.findAll(specification).stream().map(Student::toStudentResponseDTO).collect(Collectors.toList());
     }
 
     public StudentRequestDTO save(@Valid StudentRequestDTO studentRequestDTO) {
