@@ -1,6 +1,7 @@
 package com.dev.pilates.entities;
 
-import com.dev.pilates.dtos.professor.ProfessorDTO;
+import com.dev.pilates.dtos.professor.ProfessorRequestDTO;
+import com.dev.pilates.dtos.professor.ProfessorResponseDTO;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -28,7 +29,7 @@ public class Professor {
     private Long id;
     @Column(length = 50, nullable = false)
     private String username;
-    @Column(length = 100, nullable = false)
+    @Column(length = 100, nullable = false, unique = true)
     private String email;
     @Column(length = 60, nullable = false)
     private String password;
@@ -44,12 +45,20 @@ public class Professor {
     @Column(nullable = false)
     private LocalDateTime updated_at;
 
-    public ProfessorDTO toProfessorDTO() {
-        return new ProfessorDTO(
+    public ProfessorResponseDTO toProfessorResponseDTO() {
+        return new ProfessorResponseDTO(
                 this.username,
                 this.email,
                 this.role.getId()
         );
     }
 
+    public ProfessorRequestDTO toProfessorRequestDTO() {
+        return new ProfessorRequestDTO(
+                this.username,
+                this.email,
+                this.password,
+                this.role.getId()
+        );
+    }
 }
