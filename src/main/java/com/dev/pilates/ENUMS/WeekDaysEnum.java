@@ -5,5 +5,5 @@ public enum WeekDaysEnum {
     Terça,
     Quarta,
     Quinta,
-    Sexta,
+    Sexta
 }

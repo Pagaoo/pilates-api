@@ -37,12 +37,16 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
         //Professor professor = professorRepository.findProfessorByUsername(username);
         Professor professor = professorRepository.findProfessorByEmail(email);
 
+        if (professor == null) {
+            throw new BadCredentialsException("Usuário ou senha inválido");
+        }
+
         if (!Objects.equals(professor.getEmail(), email)) {
             throw new BadCredentialsException("Usuário ou senha inválido");
         }
 
         if (!BCrypt.checkpw(password, professor.getPassword())) {
-            throw new BadCredentialsException("Senha ou usuário invalido");
+            throw new BadCredentialsException("Usuário ou senha inválido");
         }
 
         String roleName = roleService.getRoleNameById(professor.getRole().getId());
