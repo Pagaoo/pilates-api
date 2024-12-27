@@ -7,9 +7,9 @@ import org.springframework.stereotype.Service;
 public class RoleService {
 
     public String getRoleNameById(long id) {
-        switch ((int) id) {
-            case 3: return RoleEnum.ROLE_PROFESSOR.toString();
-            default: return RoleEnum.ROLE_ADMIN.toString();
+        if ((int) id == 2) {
+            return RoleEnum.ROLE_PROFESSOR.toString();
         }
+        return RoleEnum.ROLE_ADMIN.toString();
     }
 }

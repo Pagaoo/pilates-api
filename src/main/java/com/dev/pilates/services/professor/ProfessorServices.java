@@ -13,7 +13,6 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -41,8 +40,7 @@ public class ProfessorServices {
 
     public List<ProfessorResponseDTO> findAll() {
         List<Professor> professorList = professorRepository.findAll();
-        List<ProfessorResponseDTO> professorDTOList = professorList.stream().map(Professor::toProfessorResponseDTO).collect(Collectors.toList());
-        return professorDTOList;
+        return professorList.stream().map(Professor::toProfessorResponseDTO).collect(Collectors.toList());
     }
 
     public ProfessorResponseDTO findProfessorById(Long id) {
