@@ -1,5 +1,7 @@
 package com.dev.pilates.entities;
 
+import com.dev.pilates.ENUMS.WeekDaysEnum;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -24,11 +26,21 @@ public class Classes {
     @ManyToOne
     @JoinColumn(name = "professor_id", nullable = false)
     private Professor professor_id;
+    @ManyToOne
+    @JoinColumn(name = "student_id", nullable = false)
+    private Student student_id;
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private WeekDaysEnum weekday;
     @Column(nullable = false)
     private LocalDateTime class_date;
     @CreatedDate
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "America/Sao_Paulo")
+    @Column(nullable = false, updatable = false)
     private LocalDateTime created_at;
     @LastModifiedDate
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "America/Sao_Paulo")
+    @Column(nullable = false)
     private LocalDateTime updated_at;
 
 }
