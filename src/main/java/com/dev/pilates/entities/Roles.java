@@ -1,6 +1,7 @@
 package com.dev.pilates.entities;
 
 import com.dev.pilates.ENUMS.RoleEnum;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
@@ -26,9 +27,11 @@ public class Roles {
     @Column(length = 50, nullable = false)
     private String description;
     @CreatedDate
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "America/Sao_Paulo")
     @Column(nullable = false, updatable = false)
     private LocalDateTime created_at;
     @LastModifiedDate
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "America/Sao_Paulo")
     @Column(nullable = false)
     private LocalDateTime updated_at;
 }
