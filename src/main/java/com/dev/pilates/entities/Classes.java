@@ -2,6 +2,7 @@ package com.dev.pilates.entities;
 
 import com.dev.pilates.ENUMS.ClassesHoursEnum;
 import com.dev.pilates.ENUMS.WeekDaysEnum;
+import com.dev.pilates.dtos.classes.ClassesRequestDTO;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -13,6 +14,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @EntityListeners(AuditingEntityListener.class)
@@ -26,10 +28,14 @@ public class Classes {
     private long id;
     @ManyToOne
     @JoinColumn(name = "professor_id", nullable = false)
-    private Professor professor_id;
-    @ManyToOne
-    @JoinColumn(name = "student_id", nullable = false)
-    private Student student_id;
+    private Professor professor;
+    @ManyToMany
+    @JoinTable(
+            name = "classes_students",
+            joinColumns = @JoinColumn(name = "classes_id"),
+            inverseJoinColumns = @JoinColumn(name = "student_id")
+    )
+    private List<Student> students;
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private WeekDaysEnum weekday;
@@ -45,4 +51,14 @@ public class Classes {
     @Column(nullable = false)
     private LocalDateTime updated_at;
 
+
+    public ClassesRequestDTO toClassesRequestDTO() {
+        return new ClassesRequestDTO(
+                this.id,
+                this.professor.getId(),
+                this.students.stream().map(Student::getId).toList(),
+                this.weekday,
+                this.class_hour
+        );
+    }
 }
