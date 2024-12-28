@@ -9,4 +9,5 @@ import org.springframework.stereotype.Repository;
 public interface ProfessorRepository extends JpaRepository<Professor, Long>, JpaSpecificationExecutor<Professor> {
     Professor findProfessorByUsername(String username);
     Professor findProfessorByEmail(String email);
+    Professor findProfessorById(Long professorId);
 }
