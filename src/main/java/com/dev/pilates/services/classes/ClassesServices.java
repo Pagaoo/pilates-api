@@ -8,6 +8,7 @@ import com.dev.pilates.repositories.ClassesRepository;
 import com.dev.pilates.repositories.ProfessorRepository;
 import com.dev.pilates.repositories.StudentRepository;
 import jakarta.validation.Valid;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -25,10 +26,14 @@ public class ClassesServices {
     }
 
     public ClassesRequestDTO save(ClassesRequestDTO classesRequestDTO) {
-        Professor professor = professorRepository.findProfessorById(classesRequestDTO.professorId());
-        List<Student> students = studentRepository.findAllById(classesRequestDTO.studentsId());
-        Classes newClasses = classesRequestDTO.toClasses(professor, students);
-        classesRepository.save(newClasses);
-        return newClasses.toClassesRequestDTO();
+        try {
+            Professor professor = professorRepository.findProfessorById(classesRequestDTO.professorId());
+            List<Student> students = studentRepository.findAllById(classesRequestDTO.studentsId());
+            Classes newClasses = classesRequestDTO.toClasses(professor, students);
+            classesRepository.save(newClasses);
+            return newClasses.toClassesRequestDTO();
+        } catch (DataIntegrityViolationException e) {
+            throw new DataIntegrityViolationException(e.getMessage());
+        }
     }
 }

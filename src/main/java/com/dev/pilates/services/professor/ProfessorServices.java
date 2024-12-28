@@ -8,7 +8,6 @@ import com.dev.pilates.repositories.ProfessorRepository;
 import com.dev.pilates.repositories.RolesRepository;
 import com.dev.pilates.specifications.ProfessorSpecifications;
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.validation.Valid;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
