@@ -1,6 +1,6 @@
 package com.dev.pilates.controllers;
 
-import com.dev.pilates.entities.Classes;
+import com.dev.pilates.dtos.classes.ClassesRequestDTO;
 import com.dev.pilates.services.classes.ClassesServices;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -21,10 +21,10 @@ public class ClassesController {
         this.classesServices = classesServices;
     }
 
-    @PreAuthorize(value = "hasRole('ROLE_ADMIN')")
+    @PreAuthorize(value = "hasAnyRole('ROLE_ADMIN', 'ROLE_PROFESSOR')")
     @PostMapping
-    public ResponseEntity<Classes> addClass(@RequestBody @Valid Classes classes) {
-        Classes newClass = classesServices.save(classes);
+    public ResponseEntity<ClassesRequestDTO> addClass(@RequestBody @Valid ClassesRequestDTO classesRequestDTO) {
+        ClassesRequestDTO newClass = classesServices.save(classesRequestDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(newClass);
     }
 }
