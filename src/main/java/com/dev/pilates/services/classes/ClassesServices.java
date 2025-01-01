@@ -1,17 +1,18 @@
 package com.dev.pilates.services.classes;
 
 import com.dev.pilates.dtos.classes.ClassesRequestDTO;
+import com.dev.pilates.dtos.classes.ClassesResponseDTO;
 import com.dev.pilates.entities.Classes;
 import com.dev.pilates.entities.Professor;
 import com.dev.pilates.entities.Student;
 import com.dev.pilates.repositories.ClassesRepository;
 import com.dev.pilates.repositories.ProfessorRepository;
 import com.dev.pilates.repositories.StudentRepository;
-import jakarta.validation.Valid;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ClassesServices {
@@ -32,6 +33,15 @@ public class ClassesServices {
             Classes newClasses = classesRequestDTO.toClasses(professor, students);
             classesRepository.save(newClasses);
             return newClasses.toClassesRequestDTO();
+        } catch (DataIntegrityViolationException e) {
+            throw new DataIntegrityViolationException(e.getMessage());
+        }
+    }
+
+    public List<ClassesResponseDTO> findAll() {
+        try {
+            List<Classes> classesList = classesRepository.findAll();
+            return classesList.stream().map(Classes::toClassesResponseDTO).collect(Collectors.toList());
         } catch (DataIntegrityViolationException e) {
             throw new DataIntegrityViolationException(e.getMessage());
         }

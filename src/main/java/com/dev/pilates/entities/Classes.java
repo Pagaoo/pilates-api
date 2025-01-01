@@ -3,6 +3,7 @@ package com.dev.pilates.entities;
 import com.dev.pilates.ENUMS.ClassesHoursEnum;
 import com.dev.pilates.ENUMS.WeekDaysEnum;
 import com.dev.pilates.dtos.classes.ClassesRequestDTO;
+import com.dev.pilates.dtos.classes.ClassesResponseDTO;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -54,6 +55,16 @@ public class Classes {
 
     public ClassesRequestDTO toClassesRequestDTO() {
         return new ClassesRequestDTO(
+                this.id,
+                this.professor.getId(),
+                this.students.stream().map(Student::getId).toList(),
+                this.weekday,
+                this.class_hour
+        );
+    }
+
+    public ClassesResponseDTO toClassesResponseDTO() {
+        return new ClassesResponseDTO(
                 this.id,
                 this.professor.getId(),
                 this.students.stream().map(Student::getId).toList(),
