@@ -25,19 +25,31 @@ public class StudentServices {
     }
 
     public List<StudentResponseDTO> findAll() {
-        List<Student> students = studentRepository.findAll();
-        return students.stream().map(Student::toStudentResponseDTO).collect(Collectors.toList());
+        try {
+            List<Student> students = studentRepository.findAll();
+            return students.stream().map(Student::toStudentResponseDTO).collect(Collectors.toList());
+        } catch (RuntimeException e) {
+            throw new EntityNotFoundException(String.format("Alunos não encontrado"));
+        }
     }
 
     public StudentResponseDTO findStudentById(long id) {
-        Student student = studentRepository.findById(id).orElseThrow(() ->
-                new EntityNotFoundException("Aluno não encontrado"));
-        return student.toStudentResponseDTO();
+        try {
+            Student student = studentRepository.findById(id).orElseThrow(() ->
+                    new EntityNotFoundException("Aluno não encontrado"));
+            return student.toStudentResponseDTO();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public List<StudentResponseDTO> findStudentsByName(String name) {
-        Specification<Student> specification = StudentSpecifications.studentNameContainsIgnoreCase(name);
-        return studentRepository.findAll(specification).stream().map(Student::toStudentResponseDTO).collect(Collectors.toList());
+        try {
+            Specification<Student> specification = StudentSpecifications.studentNameContainsIgnoreCase(name);
+            return studentRepository.findAll(specification).stream().map(Student::toStudentResponseDTO).collect(Collectors.toList());
+        } catch (RuntimeException e) {
+            throw new RuntimeException(e.getMessage());
+        }
     }
 
     public StudentRequestDTO save(@Valid StudentRequestDTO studentRequestDTO) {
@@ -52,7 +64,7 @@ public class StudentServices {
 
     public void deleteStudentById(long id) {
         if (!studentRepository.existsById(id)) {
-            throw new EntityNotFoundException(String.format("Aluno com ID: %s não encontrado para deleção", id));
+            throw new EntityNotFoundException(String.format("Aluno com ID: %s não encontrado", id));
         }
         try {
             studentRepository.deleteById(id);
@@ -62,12 +74,15 @@ public class StudentServices {
     }
     
     public StudentRequestDTO updateStudentById(long id, StudentRequestDTO studentRequestDTO) {
-        Student existingStudent = studentRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Aluno não encontrado"));
+        try {
+            Student existingStudent = studentRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(String.format("Aluno de ID: %s não encontrado", id)));
+            BeanUtils.copyProperties(studentRequestDTO, existingStudent, "id", "created_at");
+            existingStudent.setUpdated_at(LocalDateTime.now());
+            Student updateStudent = studentRepository.save(existingStudent);
+            return updateStudent.toStudentRequestDTO();
 
-        BeanUtils.copyProperties(studentRequestDTO, existingStudent, "id", "created_at");
-        existingStudent.setUpdated_at(LocalDateTime.now());
-        Student updateStudent = studentRepository.save(existingStudent);
-        return updateStudent.toStudentRequestDTO();
+        } catch(RuntimeException e) {
+            throw new RuntimeException("Erro ao atualizar aluno", e);
+        }
     }
-
 }
