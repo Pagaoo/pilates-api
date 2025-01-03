@@ -42,7 +42,7 @@ public class ProfessorServices {
             List<Professor> professorList = professorRepository.findAll();
             return professorList.stream().map(Professor::toProfessorResponseDTO).collect(Collectors.toList());
         } catch (RuntimeException e) {
-            throw new EntityNotFoundException(String.format("Professores não encontrados"));
+            throw new EntityNotFoundException("Professores não encontrados");
         }
     }
 
@@ -52,7 +52,7 @@ public class ProfessorServices {
                     new EntityNotFoundException("Professor não encontrado"));
             return professor.toProfessorResponseDTO();
         } catch (RuntimeException e) {
-            throw new RuntimeException(String.format("Erro inesperado"));
+            throw new RuntimeException("Erro inesperado");
         }
     }
 
@@ -61,7 +61,7 @@ public class ProfessorServices {
             Specification<Professor> specification = ProfessorSpecifications.usernameContainsIgnoreCase(username);
             return professorRepository.findAll(specification).stream().map(Professor::toProfessorResponseDTO).collect(Collectors.toList());
         } catch (RuntimeException e) {
-            throw new EntityNotFoundException(String.format("Professores não encontrados"));
+            throw new EntityNotFoundException("Professores não encontrados");
         }
 
     }
