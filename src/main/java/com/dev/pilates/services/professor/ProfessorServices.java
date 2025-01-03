@@ -38,23 +38,41 @@ public class ProfessorServices {
     }
 
     public List<ProfessorResponseDTO> findAll() {
-        List<Professor> professorList = professorRepository.findAll();
-        return professorList.stream().map(Professor::toProfessorResponseDTO).collect(Collectors.toList());
+        try {
+            List<Professor> professorList = professorRepository.findAll();
+            return professorList.stream().map(Professor::toProfessorResponseDTO).collect(Collectors.toList());
+        } catch (RuntimeException e) {
+            throw new EntityNotFoundException(String.format("Professores não encontrados"));
+        }
     }
 
     public ProfessorResponseDTO findProfessorById(Long id) {
-        Professor professor = professorRepository.findById(id).orElseThrow(() ->
-                new EntityNotFoundException("Professor não encontrado"));
-        return professor.toProfessorResponseDTO();
+        try {
+            Professor professor = professorRepository.findById(id).orElseThrow(() ->
+                    new EntityNotFoundException("Professor não encontrado"));
+            return professor.toProfessorResponseDTO();
+        } catch (RuntimeException e) {
+            throw new RuntimeException(String.format("Erro inesperado"));
+        }
     }
 
     public List<ProfessorResponseDTO> findProfessorsByName(String username) {
-        Specification<Professor> specification = ProfessorSpecifications.usernameContainsIgnoreCase(username);
-        return professorRepository.findAll(specification).stream().map(Professor::toProfessorResponseDTO).collect(Collectors.toList());
+        try {
+            Specification<Professor> specification = ProfessorSpecifications.usernameContainsIgnoreCase(username);
+            return professorRepository.findAll(specification).stream().map(Professor::toProfessorResponseDTO).collect(Collectors.toList());
+        } catch (RuntimeException e) {
+            throw new EntityNotFoundException(String.format("Professores não encontrados"));
+        }
+
     }
 
     public ProfessorResponseDTO findProfessorByEmail(String email) {
-        Professor professor = professorRepository.findProfessorByEmail(email);
-        return professor.toProfessorResponseDTO();
+        try {
+            Professor professor = professorRepository.findProfessorByEmail(email);
+            return professor.toProfessorResponseDTO();
+        } catch (RuntimeException e) {
+            throw new EntityNotFoundException(String.format("Professor de email: %s não encontrado", email));
+        }
+
     }
 }
