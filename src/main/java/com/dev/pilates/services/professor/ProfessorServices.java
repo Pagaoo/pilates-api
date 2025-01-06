@@ -60,7 +60,7 @@ public class ProfessorServices {
         try {
             Specification<Professor> specification = ProfessorSpecifications.usernameContainsIgnoreCase(username);
             return professorRepository.findAll(specification).stream().map(Professor::toProfessorResponseDTO).collect(Collectors.toList());
-        } catch (RuntimeException e) {
+        } catch (EntityNotFoundException e) {
             throw new EntityNotFoundException("Professores não encontrados");
         }
 
