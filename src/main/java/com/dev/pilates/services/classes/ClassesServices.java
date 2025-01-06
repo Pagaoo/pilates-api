@@ -35,7 +35,7 @@ public class ClassesServices {
             classesRepository.save(newClasses);
             return newClasses.toClassesRequestDTO();
         } catch (DataIntegrityViolationException e) {
-            throw new CreatingEntityException(e.getMessage());
+            throw new CreatingEntityException(String.format("Error while creating classes: %s", e.getMessage()));
         }
     }
 
