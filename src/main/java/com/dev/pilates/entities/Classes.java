@@ -55,7 +55,6 @@ public class Classes {
 
     public ClassesRequestDTO toClassesRequestDTO() {
         return new ClassesRequestDTO(
-                this.id,
                 this.professor.getId(),
                 this.students.stream().map(Student::getId).toList(),
                 this.weekday,

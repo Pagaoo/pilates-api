@@ -5,6 +5,7 @@ import com.dev.pilates.dtos.classes.ClassesResponseDTO;
 import com.dev.pilates.entities.Classes;
 import com.dev.pilates.entities.Professor;
 import com.dev.pilates.entities.Student;
+import com.dev.pilates.exceptions.CreatingEntityException;
 import com.dev.pilates.repositories.ClassesRepository;
 import com.dev.pilates.repositories.ProfessorRepository;
 import com.dev.pilates.repositories.StudentRepository;
@@ -34,7 +35,7 @@ public class ClassesServices {
             classesRepository.save(newClasses);
             return newClasses.toClassesRequestDTO();
         } catch (DataIntegrityViolationException e) {
-            throw new DataIntegrityViolationException(e.getMessage());
+            throw new CreatingEntityException(e.getMessage());
         }
     }
 
