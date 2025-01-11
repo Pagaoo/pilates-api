@@ -3,6 +3,7 @@ package com.dev.pilates.entities;
 import com.dev.pilates.dtos.professor.ProfessorRequestDTO;
 import com.dev.pilates.dtos.professor.ProfessorResponseDTO;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -32,6 +33,7 @@ public class Professor {
     @Column(length = 100, nullable = false, unique = true)
     private String email;
     @Column(length = 60, nullable = false)
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
     @ManyToOne
     @JoinColumn(name = "role_id", nullable = false)
