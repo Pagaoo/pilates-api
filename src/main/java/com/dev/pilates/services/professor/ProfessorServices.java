@@ -46,6 +46,7 @@ public class ProfessorServices {
         }
     }
 
+    //Fazer esse funçào voltar optional para retirar os elsethrow redundantes
     public ProfessorResponseDTO findProfessorById(Long id) {
         try {
             Professor professor = professorRepository.findById(id).orElseThrow(() ->

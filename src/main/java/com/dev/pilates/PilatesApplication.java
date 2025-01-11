@@ -11,3 +11,5 @@ public class PilatesApplication {
 	}
 
 }
+
+//ver como implementar jwt e quais seus pros e contras
