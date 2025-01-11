@@ -30,18 +30,12 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-        //final String username = authentication.getName();
         final String email = authentication.getName();
         final String password = authentication.getCredentials().toString();
 
-        //Professor professor = professorRepository.findProfessorByUsername(username);
         Professor professor = professorRepository.findProfessorByEmail(email);
 
         if (professor == null) {
-            throw new BadCredentialsException("Usuário ou senha inválido");
-        }
-
-        if (!Objects.equals(professor.getEmail(), email)) {
             throw new BadCredentialsException("Usuário ou senha inválido");
         }
 
@@ -49,7 +43,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
             throw new BadCredentialsException("Usuário ou senha inválido");
         }
 
-        String roleName = roleService.getRoleNameById(professor.getRole().getId());
+        String roleName = professor.getRole().getRole().toString();
 
         List<GrantedAuthority> grantedAuthorities = Collections.singletonList(new SimpleGrantedAuthority(roleName));
 

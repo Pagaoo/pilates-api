@@ -74,6 +74,5 @@ public class ProfessorServices {
         } catch (RuntimeException e) {
             throw new EntityNotFoundException(String.format("Professor de email: %s não encontrado", email));
         }
-
     }
 }
