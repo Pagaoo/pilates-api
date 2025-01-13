@@ -2,8 +2,7 @@ package com.dev.pilates.services.classes;
 
 import com.dev.pilates.dtos.classes.ClassesRequestDTO;
 import com.dev.pilates.dtos.classes.ClassesResponseDTO;
-import com.dev.pilates.dtos.classes.utils.ClassesAddStudentsRequestDTO;
-import com.dev.pilates.dtos.classes.utils.ClassesRemoveStudentResponseDTO;
+import com.dev.pilates.dtos.classes.utils.ClassesAddOrRemoveStudentDTO;
 import com.dev.pilates.entities.Classes;
 import com.dev.pilates.entities.Professor;
 import com.dev.pilates.entities.Student;
@@ -52,14 +51,14 @@ public class ClassesServices {
         }
     }
 
-    public ClassesResponseDTO removeStudentFromClasses(long classId, long professorId, ClassesRemoveStudentResponseDTO removeStudentResponseDTO) {
+    public ClassesResponseDTO removeStudentFromClasses(long classId, long professorId, ClassesAddOrRemoveStudentDTO removeStudentResponseDTO) {
         Classes classes = classesRepository.findById(classId)
                 .orElseThrow(() -> new EntityNotFoundException(String.format("Classes with id %s not found", classId)));
         if (!classes.getProfessor().getId().equals(professorId)) {
             throw new RuntimeException("Professor não autorizado a essa ação");
         }
 
-        List<Student> studentsToRemove = studentRepository.findAllById(removeStudentResponseDTO.studentsId());
+        List<Student> studentsToRemove = studentRepository.findAllById(removeStudentResponseDTO.studentsIds());
         classes.getStudents().removeIf(studentsToRemove::contains);
         classes.setUpdated_at(LocalDateTime.now());
 
@@ -67,7 +66,7 @@ public class ClassesServices {
         return classes.toClassesResponseDTO();
     }
 
-    public ClassesResponseDTO addStudentToClasses(long classId, long professorId, ClassesAddStudentsRequestDTO addStudentsRequestDTO) {
+    public ClassesResponseDTO addStudentToClasses(long classId, long professorId, ClassesAddOrRemoveStudentDTO addStudentsRequestDTO) {
         Classes existingClass = classesRepository.findById(classId).orElseThrow(() -> new EntityNotFoundException("Aula não existe"));
 
         List<Student> existingStudents = studentRepository.findAllById(addStudentsRequestDTO.studentsIds());

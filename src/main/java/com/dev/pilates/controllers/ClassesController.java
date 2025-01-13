@@ -2,8 +2,7 @@ package com.dev.pilates.controllers;
 
 import com.dev.pilates.dtos.classes.ClassesRequestDTO;
 import com.dev.pilates.dtos.classes.ClassesResponseDTO;
-import com.dev.pilates.dtos.classes.utils.ClassesAddStudentsRequestDTO;
-import com.dev.pilates.dtos.classes.utils.ClassesRemoveStudentResponseDTO;
+import com.dev.pilates.dtos.classes.utils.ClassesAddOrRemoveStudentDTO;
 import com.dev.pilates.services.classes.ClassesServices;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -42,7 +41,7 @@ public class ClassesController {
     public ResponseEntity<ClassesResponseDTO> removeStudentFromClasses(
             @PathVariable long classId,
             @RequestHeader("Professor-Id") long professorId,
-            @RequestBody ClassesRemoveStudentResponseDTO removeStudentResponseDTO) {
+            @RequestBody ClassesAddOrRemoveStudentDTO removeStudentResponseDTO) {
         ClassesResponseDTO updatedClass = classesServices.removeStudentFromClasses(classId, professorId, removeStudentResponseDTO);
         return ResponseEntity.status(HttpStatus.OK).body(updatedClass);
     }
@@ -51,7 +50,7 @@ public class ClassesController {
     @PostMapping("{classId}/add-students")
     public ResponseEntity<ClassesResponseDTO> addStudentToClass(@PathVariable long classId,
                                                                @RequestHeader("Professor-id") long professorId,
-                                                               @RequestBody ClassesAddStudentsRequestDTO addStudentsRequestDTO) {
+                                                               @RequestBody ClassesAddOrRemoveStudentDTO addStudentsRequestDTO) {
         ClassesResponseDTO updatedStudentList = classesServices.addStudentToClasses(classId, professorId, addStudentsRequestDTO);
         return ResponseEntity.status(HttpStatus.OK).body(updatedStudentList);
     }
