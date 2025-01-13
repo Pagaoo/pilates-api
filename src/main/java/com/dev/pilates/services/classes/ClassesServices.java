@@ -74,17 +74,17 @@ public class ClassesServices {
     public ClassesResponseDTO addStudentToClasses(long classId, long professorId, ClassesAddStudentsRequestDTO addStudentsRequestDTO) {
         Classes existingClass = classesRepository.findById(classId).orElseThrow(() -> new EntityNotFoundException("Aula não existe"));
 
-       List<Student> existingStudents = studentRepository.findAllById(addStudentsRequestDTO.studentsIds());
+        List<Student> existingStudents = studentRepository.findAllById(addStudentsRequestDTO.studentsIds());
 
-       for (Student student : existingStudents) {
-           if (!existingClass.getStudents().contains(student)) {
-               existingClass.getStudents().add(student);
-           }
-       }
-
-        if (!existingClass.getProfessor().getId().equals(professorId)) {
-            throw new RuntimeException("Professor não autorizado a essa ação");
+        for (Student student : existingStudents) {
+            if (!existingClass.getStudents().contains(student)) {
+                existingClass.getStudents().add(student);
+            }
         }
+
+            if (!existingClass.getProfessor().getId().equals(professorId)) {
+                throw new RuntimeException("Professor não autorizado a essa ação");
+            }
 
         Classes updatedClass = classesRepository.save(existingClass);
         return updatedClass.toClassesResponseDTO();
