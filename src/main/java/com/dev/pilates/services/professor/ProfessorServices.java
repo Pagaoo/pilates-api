@@ -46,15 +46,10 @@ public class ProfessorServices {
         }
     }
 
-    //Fazer esse funçào voltar optional para retirar os elsethrow redundantes
     public ProfessorResponseDTO findProfessorById(Long id) {
-        try {
             Professor professor = professorRepository.findById(id).orElseThrow(() ->
                     new EntityNotFoundException("Professor não encontrado"));
             return professor.toProfessorResponseDTO();
-        } catch (EntityNotFoundException e) {
-            throw new EntityNotFoundException(String.format("Professor não encontrado"));
-        }
     }
 
     public List<ProfessorResponseDTO> findProfessorsByName(String username) {
