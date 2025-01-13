@@ -1,4 +1,4 @@
-package com.dev.pilates.dtos.classes;
+package com.dev.pilates.dtos.classes.utils;
 
 import java.util.List;
 
