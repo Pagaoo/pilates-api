@@ -34,13 +34,9 @@ public class StudentServices {
     }
 
     public StudentResponseDTO findStudentById(long id) {
-        try {
-            Student student = studentRepository.findById(id).orElseThrow(() ->
-                    new EntityNotFoundException("Aluno não encontrado"));
-            return student.toStudentResponseDTO();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        Student student = studentRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Aluno não encontrado"));
+        return student.toStudentResponseDTO();
     }
 
     public List<StudentResponseDTO> findStudentsByName(String name) {
@@ -75,12 +71,11 @@ public class StudentServices {
     
     public StudentRequestDTO updateStudentById(long id, StudentRequestDTO studentRequestDTO) {
         try {
-            Student existingStudent = studentRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(String.format("Aluno de ID: %s não encontrado", id)));
+            Student existingStudent = studentRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(String.format("Aluno de ID: %s não encontrado para atualizar", id)));
             BeanUtils.copyProperties(studentRequestDTO, existingStudent, "id", "created_at");
             existingStudent.setUpdated_at(LocalDateTime.now());
             Student updateStudent = studentRepository.save(existingStudent);
             return updateStudent.toStudentRequestDTO();
-
         } catch(RuntimeException e) {
             throw new RuntimeException("Erro ao atualizar aluno", e);
         }
