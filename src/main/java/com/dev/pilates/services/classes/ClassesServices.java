@@ -1,9 +1,9 @@
 package com.dev.pilates.services.classes;
 
-import com.dev.pilates.dtos.classes.utils.ClassesAddStudentsRequestDTO;
-import com.dev.pilates.dtos.classes.utils.ClassesRemoveStudentResponseDTO;
 import com.dev.pilates.dtos.classes.ClassesRequestDTO;
 import com.dev.pilates.dtos.classes.ClassesResponseDTO;
+import com.dev.pilates.dtos.classes.utils.ClassesAddStudentsRequestDTO;
+import com.dev.pilates.dtos.classes.utils.ClassesRemoveStudentResponseDTO;
 import com.dev.pilates.entities.Classes;
 import com.dev.pilates.entities.Professor;
 import com.dev.pilates.entities.Student;
@@ -16,7 +16,6 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -53,22 +52,19 @@ public class ClassesServices {
         }
     }
 
-    public ClassesRemoveStudentResponseDTO removeStudentFromClasses(long classId, long studentId, long professorId) {
+    public ClassesResponseDTO removeStudentFromClasses(long classId, long professorId, ClassesRemoveStudentResponseDTO removeStudentResponseDTO) {
         Classes classes = classesRepository.findById(classId)
                 .orElseThrow(() -> new EntityNotFoundException(String.format("Classes with id %s not found", classId)));
         if (!classes.getProfessor().getId().equals(professorId)) {
             throw new RuntimeException("Professor não autorizado a essa ação");
         }
 
-        List<Student> updateList = new ArrayList<>(classes.getStudents()
-                .stream()
-                .filter(student -> !student.getId().equals(studentId))
-                .toList());
-
-        classes.setStudents(updateList);
+        List<Student> studentsToRemove = studentRepository.findAllById(removeStudentResponseDTO.studentsId());
+        classes.getStudents().removeIf(studentsToRemove::contains);
         classes.setUpdated_at(LocalDateTime.now());
+
         classesRepository.save(classes);
-        return ClassesRemoveStudentResponseDTO.fromClasses(classes);
+        return classes.toClassesResponseDTO();
     }
 
     public ClassesResponseDTO addStudentToClasses(long classId, long professorId, ClassesAddStudentsRequestDTO addStudentsRequestDTO) {
@@ -82,9 +78,9 @@ public class ClassesServices {
             }
         }
 
-            if (!existingClass.getProfessor().getId().equals(professorId)) {
-                throw new RuntimeException("Professor não autorizado a essa ação");
-            }
+        if (!existingClass.getProfessor().getId().equals(professorId)) {
+            throw new RuntimeException("Professor não autorizado a esta ação");
+        }
 
         Classes updatedClass = classesRepository.save(existingClass);
         return updatedClass.toClassesResponseDTO();

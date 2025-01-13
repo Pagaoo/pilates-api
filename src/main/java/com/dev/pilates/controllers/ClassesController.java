@@ -1,9 +1,9 @@
 package com.dev.pilates.controllers;
 
-import com.dev.pilates.dtos.classes.utils.ClassesAddStudentsRequestDTO;
-import com.dev.pilates.dtos.classes.utils.ClassesRemoveStudentResponseDTO;
 import com.dev.pilates.dtos.classes.ClassesRequestDTO;
 import com.dev.pilates.dtos.classes.ClassesResponseDTO;
+import com.dev.pilates.dtos.classes.utils.ClassesAddStudentsRequestDTO;
+import com.dev.pilates.dtos.classes.utils.ClassesRemoveStudentResponseDTO;
 import com.dev.pilates.services.classes.ClassesServices;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -38,12 +38,12 @@ public class ClassesController {
     }
 
     @PreAuthorize(value = "hasAnyRole('ROLE_ADMIN', 'ROLE_PROFESSOR')")
-    @DeleteMapping("/{classId}/remove-student/{studentId}")
-    public ResponseEntity<ClassesRemoveStudentResponseDTO> removeStudentFromClasses(
+    @DeleteMapping("/{classId}/remove-students")
+    public ResponseEntity<ClassesResponseDTO> removeStudentFromClasses(
             @PathVariable long classId,
-            @PathVariable long studentId,
-            @RequestHeader("Professor-Id") long professorId) {
-        ClassesRemoveStudentResponseDTO updatedClass = classesServices.removeStudentFromClasses(classId, studentId, professorId);
+            @RequestHeader("Professor-Id") long professorId,
+            @RequestBody ClassesRemoveStudentResponseDTO removeStudentResponseDTO) {
+        ClassesResponseDTO updatedClass = classesServices.removeStudentFromClasses(classId, professorId, removeStudentResponseDTO);
         return ResponseEntity.status(HttpStatus.OK).body(updatedClass);
     }
 
