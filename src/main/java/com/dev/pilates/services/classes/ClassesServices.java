@@ -1,7 +1,7 @@
 package com.dev.pilates.services.classes;
 
-import com.dev.pilates.dtos.classes.ClassesAddStudentsRequestDTO;
-import com.dev.pilates.dtos.classes.ClassesRemoveStudentResponseDTO;
+import com.dev.pilates.dtos.classes.utils.ClassesAddStudentsRequestDTO;
+import com.dev.pilates.dtos.classes.utils.ClassesRemoveStudentResponseDTO;
 import com.dev.pilates.dtos.classes.ClassesRequestDTO;
 import com.dev.pilates.dtos.classes.ClassesResponseDTO;
 import com.dev.pilates.entities.Classes;
