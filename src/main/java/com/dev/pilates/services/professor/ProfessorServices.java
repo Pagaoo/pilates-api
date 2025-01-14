@@ -70,4 +70,10 @@ public class ProfessorServices {
             throw new EntityNotFoundException(String.format("Professor de email: %s não encontrado", email));
         }
     }
+
+    public Professor deleteProfessor(Long id) {
+        Professor professorToDelete = professorRepository.findProfessorById(id);
+        professorRepository.delete(professorToDelete);
+        return professorToDelete;
+    }
 }

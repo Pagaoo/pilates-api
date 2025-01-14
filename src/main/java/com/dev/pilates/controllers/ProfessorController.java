@@ -2,6 +2,7 @@ package com.dev.pilates.controllers;
 
 import com.dev.pilates.dtos.professor.ProfessorRequestDTO;
 import com.dev.pilates.dtos.professor.ProfessorResponseDTO;
+import com.dev.pilates.entities.Professor;
 import com.dev.pilates.services.professor.ProfessorServices;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -54,5 +55,12 @@ public class ProfessorController {
     public ResponseEntity<List<ProfessorResponseDTO>> getProfessorByUsername(@PathVariable String username) {
         List<ProfessorResponseDTO> professorResponseDTO = professorServices.findProfessorsByName(username);
         return ResponseEntity.ok(professorResponseDTO);
+    }
+
+    @PreAuthorize(value = "hasRole('ROLE_ADMIN')")
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteProfessorById(@PathVariable long id) {
+        professorServices.deleteProfessor(id);
+        return ResponseEntity.noContent().build();
     }
 }
