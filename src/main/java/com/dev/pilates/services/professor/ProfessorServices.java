@@ -9,6 +9,7 @@ import com.dev.pilates.repositories.RolesRepository;
 import com.dev.pilates.specifications.ProfessorSpecifications;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
@@ -72,8 +73,13 @@ public class ProfessorServices {
     }
 
     public Professor deleteProfessor(Long id) {
-        Professor professorToDelete = professorRepository.findProfessorById(id);
-        professorRepository.delete(professorToDelete);
-        return professorToDelete;
+        try {
+            Professor professorToDelete = professorRepository.findProfessorById(id);
+            professorRepository.delete(professorToDelete);
+            return professorToDelete;
+        } catch (InvalidDataAccessApiUsageException e) {
+            throw new EntityNotFoundException("Professor não encontrado para exclusão");
+        }
+
     }
 }

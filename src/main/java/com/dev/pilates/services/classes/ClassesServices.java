@@ -12,6 +12,7 @@ import com.dev.pilates.repositories.ProfessorRepository;
 import com.dev.pilates.repositories.StudentRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -83,5 +84,22 @@ public class ClassesServices {
 
         Classes updatedClass = classesRepository.save(existingClass);
         return updatedClass.toClassesResponseDTO();
+    }
+
+    public ClassesResponseDTO findClassesById(long classId) {
+        Classes classes = classesRepository.findById(classId)
+                .orElseThrow(() -> new EntityNotFoundException("Aula não encontrada"));
+        return classes.toClassesResponseDTO();
+    }
+
+    public Classes deleteClass(long classId) {
+        try {
+            Classes classToBeDeleted = classesRepository.findClassesById(classId);
+            classesRepository.delete(classToBeDeleted);
+            return classToBeDeleted;
+        }
+        catch (InvalidDataAccessApiUsageException e) {
+            throw new EntityNotFoundException("Aula não encontrada para exclusão");
+        }
     }
 }
