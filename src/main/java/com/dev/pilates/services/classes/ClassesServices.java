@@ -92,14 +92,24 @@ public class ClassesServices {
         return classes.toClassesResponseDTO();
     }
 
-    public Classes deleteClass(long classId) {
+    public void deleteClass(long classId) {
         try {
             Classes classToBeDeleted = classesRepository.findClassesById(classId);
             classesRepository.delete(classToBeDeleted);
-            return classToBeDeleted;
         }
         catch (InvalidDataAccessApiUsageException e) {
             throw new EntityNotFoundException("Aula não encontrada para exclusão");
         }
+    }
+
+    public ClassesResponseDTO updateClass(long classId, long professorId) {
+        Classes classesToBeUpdated = classesRepository.findById(classId)
+                .orElseThrow(() -> new EntityNotFoundException("Aula não encontrada"));
+
+        Professor professorToBePlaced = professorRepository.findById(professorId)
+                .orElseThrow(() -> new EntityNotFoundException("Professor não encontrado para substituir o anterior"));
+
+        classesToBeUpdated.setProfessor(professorToBePlaced);
+        return classesRepository.save(classesToBeUpdated).toClassesResponseDTO();
     }
 }

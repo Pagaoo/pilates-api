@@ -72,11 +72,10 @@ public class ProfessorServices {
         }
     }
 
-    public Professor deleteProfessor(Long id) {
+    public void deleteProfessor(Long id) {
         try {
             Professor professorToDelete = professorRepository.findProfessorById(id);
             professorRepository.delete(professorToDelete);
-            return professorToDelete;
         } catch (InvalidDataAccessApiUsageException e) {
             throw new EntityNotFoundException("Professor não encontrado para exclusão");
         }

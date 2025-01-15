@@ -69,4 +69,11 @@ public class ClassesController {
         classesServices.deleteClass(id);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
+
+    @PreAuthorize(value = "hasRole('ROLE_ADMIN')")
+    @PatchMapping("/{classId}/change-professor/{professorId}")
+    public ResponseEntity<ClassesResponseDTO> updateProfessorClassById(@PathVariable long classId, @PathVariable long professorId) {
+        ClassesResponseDTO classesToBeUpdated = classesServices.updateClass(classId, professorId);
+        return ResponseEntity.status(HttpStatus.OK).body(classesToBeUpdated);
+    }
 }
