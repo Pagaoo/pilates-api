@@ -2,6 +2,7 @@ package com.dev.pilates.services.student;
 
 import com.dev.pilates.dtos.student.StudentRequestDTO;
 import com.dev.pilates.dtos.student.StudentResponseDTO;
+import com.dev.pilates.entities.Classes;
 import com.dev.pilates.entities.Student;
 import com.dev.pilates.repositories.StudentRepository;
 import com.dev.pilates.specifications.StudentSpecifications;
@@ -59,10 +60,11 @@ public class StudentServices {
     }
 
     public void deleteStudentById(long id) {
-        if (!studentRepository.existsById(id)) {
-            throw new EntityNotFoundException(String.format("Aluno com ID: %s não encontrado", id));
-        }
+        Student studentToBeDeleted = studentRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Aluno não encontrado"));
         try {
+            for (Classes classes : studentToBeDeleted.getClassesList()) {
+                classes.getStudents().remove(studentToBeDeleted);
+            }
             studentRepository.deleteById(id);
         } catch (DataIntegrityViolationException e) {
             throw new RuntimeException("Erro de integridade ao tentar deletar aluno", e);
