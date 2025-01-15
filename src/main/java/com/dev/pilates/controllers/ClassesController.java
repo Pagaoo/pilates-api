@@ -3,6 +3,7 @@ package com.dev.pilates.controllers;
 import com.dev.pilates.dtos.classes.ClassesRequestDTO;
 import com.dev.pilates.dtos.classes.ClassesResponseDTO;
 import com.dev.pilates.dtos.classes.utils.ClassesAddOrRemoveStudentDTO;
+import com.dev.pilates.entities.Classes;
 import com.dev.pilates.services.classes.ClassesServices;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -53,5 +54,19 @@ public class ClassesController {
                                                                @RequestBody ClassesAddOrRemoveStudentDTO addStudentsRequestDTO) {
         ClassesResponseDTO updatedStudentList = classesServices.addStudentToClasses(classId, professorId, addStudentsRequestDTO);
         return ResponseEntity.status(HttpStatus.OK).body(updatedStudentList);
+    }
+
+    @PreAuthorize(value = "hasAnyRole('ROLE_ADMIN', 'ROLE_PROFESSOR')")
+    @GetMapping("/{id}")
+    public ResponseEntity<ClassesResponseDTO> getClassById(@PathVariable long id) {
+        ClassesResponseDTO classes = classesServices.findClassesById(id);
+        return ResponseEntity.status(HttpStatus.OK).body(classes);
+    }
+
+    @PreAuthorize(value = "hasAnyRole('ROLE_ADMIN', 'ROLE_PROFESSOR')")
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteClass(@PathVariable long id) {
+        classesServices.deleteClass(id);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }
