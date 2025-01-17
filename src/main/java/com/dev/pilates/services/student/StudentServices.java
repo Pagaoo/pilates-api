@@ -7,6 +7,7 @@ import com.dev.pilates.entities.Student;
 import com.dev.pilates.repositories.StudentRepository;
 import com.dev.pilates.specifications.StudentSpecifications;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -30,7 +31,7 @@ public class StudentServices {
             List<Student> students = studentRepository.findAll();
             return students.stream().map(Student::toStudentResponseDTO).collect(Collectors.toList());
         } catch (RuntimeException e) {
-            throw new EntityNotFoundException(String.format("Alunos não encontrado"));
+            throw new EntityNotFoundException("Alunos não encontrado");
         }
     }
 
@@ -49,6 +50,7 @@ public class StudentServices {
         }
     }
 
+    @Transactional
     public StudentRequestDTO save(@Valid StudentRequestDTO studentRequestDTO) {
         try {
             Student newStudent = studentRequestDTO.toStudent();
