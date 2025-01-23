@@ -3,7 +3,6 @@ package com.dev.pilates.controllers;
 import com.dev.pilates.dtos.classes.ClassesRequestDTO;
 import com.dev.pilates.dtos.classes.ClassesResponseDTO;
 import com.dev.pilates.dtos.classes.utils.ClassesAddOrRemoveStudentDTO;
-import com.dev.pilates.entities.Classes;
 import com.dev.pilates.services.classes.ClassesServices;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -73,7 +72,7 @@ public class ClassesController {
     @PreAuthorize(value = "hasRole('ROLE_ADMIN')")
     @PatchMapping("/{classId}/change-professor/{professorId}")
     public ResponseEntity<ClassesResponseDTO> updateProfessorClassById(@PathVariable long classId, @PathVariable long professorId) {
-        ClassesResponseDTO classesToBeUpdated = classesServices.updateClass(classId, professorId);
+        ClassesResponseDTO classesToBeUpdated = classesServices.changeClassProfessor(classId, professorId);
         return ResponseEntity.status(HttpStatus.OK).body(classesToBeUpdated);
     }
 }

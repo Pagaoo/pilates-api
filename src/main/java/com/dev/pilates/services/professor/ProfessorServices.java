@@ -27,9 +27,9 @@ public class ProfessorServices {
     }
 
     public ProfessorRequestDTO save(ProfessorRequestDTO professorDTO) {
+        Roles role = rolesRepository.findById(professorDTO.role_id()).orElseThrow(() ->
+                new EntityNotFoundException(String.format("Role de id: %s não encontrada", professorDTO.role_id())));
         try {
-            Roles role = rolesRepository.findById(professorDTO.role_id()).orElseThrow(() ->
-                    new EntityNotFoundException(String.format("Role de id: %s não encontrada", professorDTO.role_id())));
             Professor newProfessor = professorDTO.toProfessor(role);
             professorRepository.save(newProfessor);
             return newProfessor.toProfessorRequestDTO();

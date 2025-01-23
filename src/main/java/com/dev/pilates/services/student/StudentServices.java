@@ -50,7 +50,7 @@ public class StudentServices {
         }
     }
 
-    @Transactional
+    @Transactional(rollbackOn = RuntimeException.class)
     public StudentRequestDTO save(@Valid StudentRequestDTO studentRequestDTO) {
         try {
             Student newStudent = studentRequestDTO.toStudent();
@@ -74,8 +74,8 @@ public class StudentServices {
     }
     
     public StudentRequestDTO updateStudentById(long id, StudentRequestDTO studentRequestDTO) {
+        Student existingStudent = studentRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(String.format("Aluno de ID: %s não encontrado para atualizar", id)));
         try {
-            Student existingStudent = studentRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(String.format("Aluno de ID: %s não encontrado para atualizar", id)));
             BeanUtils.copyProperties(studentRequestDTO, existingStudent, "id", "created_at");
             existingStudent.setUpdated_at(LocalDateTime.now());
             Student updateStudent = studentRepository.save(existingStudent);

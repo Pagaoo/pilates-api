@@ -59,12 +59,17 @@ public class ClassesServices {
             throw new RuntimeException("Professor não autorizado a essa ação");
         }
 
-        List<Student> studentsToRemove = studentRepository.findAllById(removeStudentResponseDTO.studentsIds());
-        classes.getStudents().removeIf(studentsToRemove::contains);
-        classes.setUpdated_at(LocalDateTime.now());
+        try {
+            List<Student> studentsToRemove = studentRepository.findAllById(removeStudentResponseDTO.studentsIds());
+            classes.getStudents().removeIf(studentsToRemove::contains);
+            classes.setUpdated_at(LocalDateTime.now());
 
-        classesRepository.save(classes);
-        return classes.toClassesResponseDTO();
+            classesRepository.save(classes);
+            return classes.toClassesResponseDTO();
+        } catch (DataIntegrityViolationException e) {
+            throw new DataIntegrityViolationException("Erro ao remover aluno da aula");
+        }
+
     }
 
     public ClassesResponseDTO addStudentToClasses(long classId, long professorId, ClassesAddOrRemoveStudentDTO addStudentsRequestDTO) {
@@ -74,16 +79,21 @@ public class ClassesServices {
             throw new RuntimeException("Professor não autorizado a esta ação");
         }
 
-        List<Student> existingStudents = studentRepository.findAllById(addStudentsRequestDTO.studentsIds());
+        try {
+            List<Student> existingStudents = studentRepository.findAllById(addStudentsRequestDTO.studentsIds());
 
-        for (Student student : existingStudents) {
-            if (!existingClass.getStudents().contains(student)) {
-                existingClass.getStudents().add(student);
+            for (Student student : existingStudents) {
+                if (!existingClass.getStudents().contains(student)) {
+                    existingClass.getStudents().add(student);
+                }
             }
+
+            Classes updatedClass = classesRepository.save(existingClass);
+            return updatedClass.toClassesResponseDTO();
+        } catch (DataIntegrityViolationException e) {
+            throw new DataIntegrityViolationException("Erro ao adicionar aluno a aula");
         }
 
-        Classes updatedClass = classesRepository.save(existingClass);
-        return updatedClass.toClassesResponseDTO();
     }
 
     public ClassesResponseDTO findClassesById(long classId) {
@@ -102,14 +112,19 @@ public class ClassesServices {
         }
     }
 
-    public ClassesResponseDTO updateClass(long classId, long professorId) {
+    public ClassesResponseDTO changeClassProfessor(long classId, long professorId) {
         Classes classesToBeUpdated = classesRepository.findById(classId)
                 .orElseThrow(() -> new EntityNotFoundException("Aula não encontrada"));
 
         Professor professorToBePlaced = professorRepository.findById(professorId)
                 .orElseThrow(() -> new EntityNotFoundException("Professor não encontrado para substituir o anterior"));
 
-        classesToBeUpdated.setProfessor(professorToBePlaced);
-        return classesRepository.save(classesToBeUpdated).toClassesResponseDTO();
+        try {
+            classesToBeUpdated.setProfessor(professorToBePlaced);
+            return classesRepository.save(classesToBeUpdated).toClassesResponseDTO();
+        } catch (RuntimeException e) {
+            throw new RuntimeException("Erro ao trocar o professor da aula");
+        }
+
     }
 }
