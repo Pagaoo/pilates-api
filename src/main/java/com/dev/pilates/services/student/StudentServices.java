@@ -4,6 +4,7 @@ import com.dev.pilates.dtos.student.StudentRequestDTO;
 import com.dev.pilates.dtos.student.StudentResponseDTO;
 import com.dev.pilates.entities.Classes;
 import com.dev.pilates.entities.Student;
+import com.dev.pilates.exceptions.CreatingEntityException;
 import com.dev.pilates.repositories.StudentRepository;
 import com.dev.pilates.specifications.StudentSpecifications;
 import jakarta.persistence.EntityNotFoundException;
@@ -57,7 +58,7 @@ public class StudentServices {
             Student savedStudent = studentRepository.save(newStudent);
             return savedStudent.toStudentRequestDTO();
         } catch (RuntimeException e) {
-            throw new RuntimeException("Erro ao salvar aluno", e.getCause());
+            throw new CreatingEntityException("Erro ao salvar aluno");
         }
     }
 

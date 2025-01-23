@@ -4,6 +4,7 @@ import com.dev.pilates.dtos.professor.ProfessorRequestDTO;
 import com.dev.pilates.dtos.professor.ProfessorResponseDTO;
 import com.dev.pilates.entities.Professor;
 import com.dev.pilates.entities.Roles;
+import com.dev.pilates.exceptions.CreatingEntityException;
 import com.dev.pilates.repositories.ProfessorRepository;
 import com.dev.pilates.repositories.RolesRepository;
 import com.dev.pilates.specifications.ProfessorSpecifications;
@@ -27,6 +28,9 @@ public class ProfessorServices {
     }
 
     public ProfessorRequestDTO save(ProfessorRequestDTO professorDTO) {
+        if (professorDTO.password().trim().isEmpty() || professorDTO.password().isBlank()) {
+            throw new CreatingEntityException("password cannot be empty");
+        }
         Roles role = rolesRepository.findById(professorDTO.role_id()).orElseThrow(() ->
                 new EntityNotFoundException(String.format("Role de id: %s não encontrada", professorDTO.role_id())));
         try {
@@ -34,7 +38,7 @@ public class ProfessorServices {
             professorRepository.save(newProfessor);
             return newProfessor.toProfessorRequestDTO();
         } catch (DataIntegrityViolationException e) {
-            throw new DataIntegrityViolationException("Erro de integridade ao criar professor", e.getCause());
+            throw new CreatingEntityException("Erro ao criar professor");
         }
     }
 

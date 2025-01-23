@@ -40,7 +40,7 @@ public class GlobalExceptionHandler {
                 timestamp,
                 HttpStatus.BAD_REQUEST.value(),
                 "Error creating entity",
-                "A required field is missing or incorrect",
+                e.getMessage(),
                 request.getRequestURI()
         );
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);

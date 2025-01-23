@@ -24,7 +24,7 @@ public class ProfessorController {
 
     @PreAuthorize(value = "hasRole('ROLE_ADMIN')")
     @PostMapping
-    public ResponseEntity<ProfessorRequestDTO> createProfessor(@RequestBody @Valid ProfessorRequestDTO professorDTO) {
+    public ResponseEntity<ProfessorRequestDTO> createProfessor(@Valid @RequestBody ProfessorRequestDTO professorDTO) {
         ProfessorRequestDTO newProfessor = professorServices.save(professorDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(newProfessor);
     }
