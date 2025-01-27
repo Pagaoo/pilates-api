@@ -44,6 +44,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests((authorizeRequests) -> authorizeRequests
                         .requestMatchers("/professor/**").hasRole("ADMIN")
                         .requestMatchers("/student/**").hasAnyRole("PROFESSOR", "ADMIN")
+                        .requestMatchers("/actuator/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .logout(logout -> logout
