@@ -19,11 +19,12 @@ public class TestSuite {
     @Nested
     @Order(3)
     @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-    class stundetTestNested extends StudentTest {}
+    class studentTestNested extends StudentTest {}
 
     @Nested
     @Order(4)
     @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-    class classesTestNested extends ClassesTest {}
+    class classesTestNested extends ClassesTest {
+    }
 
 }
