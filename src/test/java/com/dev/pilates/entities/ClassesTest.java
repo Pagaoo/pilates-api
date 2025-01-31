@@ -29,37 +29,9 @@ public class ClassesTest {
 
     @BeforeEach
     public void setUp() {
-        Roles role = em.createQuery("select r from Roles r", Roles.class)
-                .setMaxResults(1)
-                .getResultStream()
-                .findFirst()
-                .orElseGet(() -> {
-                    Roles newRole = new Roles();
-                    newRole.setRole(RoleEnum.valueOf("ROLE_PROFESSOR"));
-                    newRole.setDescription("Role Professor");
-                    newRole.setCreated_at(dateTime);
-                    newRole.setUpdated_at(dateTime);
-                    em.persist(newRole);
-                    em.flush();
-                    return newRole;
-                });
 
-        Professor professor = em.createQuery("select p from Professor p", Professor.class)
-                .setMaxResults(1)
-                .getResultStream()
-                .findFirst()
-                .orElseGet(() -> {
-                    Professor newProfessor = new Professor();
-                    newProfessor.setUsername("professor");
-                    newProfessor.setPassword("professor");
-                    newProfessor.setEmail("professor@gmail.com");
-                    newProfessor.setRole(role);
-                    newProfessor.setCreated_at(dateTime);
-                    newProfessor.setUpdated_at(dateTime);
-                    em.persist(newProfessor);
-                    em.flush();
-                    return newProfessor;
-                });
+        Roles role = createOrGetRole(RoleEnum.valueOf("ROLE_PROFESSOR"), "Role Professor");
+        Professor professor = createOrGetProfessor("professor", "123", "professor@gmail.com", role);
 
         classes = new Classes();
         classes.setProfessor(professor);
@@ -85,5 +57,41 @@ public class ClassesTest {
         assertEquals(dateTime.truncatedTo(ChronoUnit.MILLIS), retrievedClasses.getCreated_at().truncatedTo(ChronoUnit.MILLIS));
         assertEquals(dateTime.truncatedTo(ChronoUnit.MILLIS), retrievedClasses.getUpdated_at().truncatedTo(ChronoUnit.MILLIS));
 
+    }
+
+    private Professor createOrGetProfessor(String username, String password, String email, Roles role) {
+        return em.createQuery("select p from Professor p where p.username = :username", Professor.class)
+                .setParameter("username", username)
+                .getResultStream()
+                .findFirst()
+                .orElseGet(() -> {
+                    Professor newProfessor = new Professor();
+                    newProfessor.setUsername(username);
+                    newProfessor.setPassword(password);
+                    newProfessor.setEmail(email);
+                    newProfessor.setRole(role);
+                    newProfessor.setCreated_at(dateTime);
+                    newProfessor.setUpdated_at(dateTime);
+                    em.persist(newProfessor);
+                    em.flush();
+                    return newProfessor;
+                });
+    }
+
+    private Roles createOrGetRole(RoleEnum roleEnum, String description) {
+        return em.createQuery("select r from Roles r where r.role = :role", Roles.class)
+                .setParameter("role", roleEnum)
+                .getResultStream()
+                .findFirst()
+                .orElseGet(() -> {
+                    Roles newRole = new Roles();
+                    newRole.setRole(roleEnum);
+                    newRole.setDescription(description);
+                    newRole.setCreated_at(dateTime);
+                    newRole.setUpdated_at(dateTime);
+                    em.persist(newRole);
+                    em.flush();
+                    return newRole;
+                });
     }
 }
