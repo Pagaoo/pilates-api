@@ -4,10 +4,11 @@ import com.dev.pilates.dtos.student.StudentResponseDTO;
 import com.dev.pilates.entities.Student;
 import com.dev.pilates.repositories.StudentRepository;
 import com.dev.pilates.services.student.StudentServices;
+import com.dev.pilates.specifications.StudentSpecifications;
 import org.junit.jupiter.api.*;
-import org.mockito.BDDMockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.time.LocalDateTime;
@@ -15,7 +16,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static org.awaitility.Awaitility.given;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
@@ -34,6 +34,8 @@ public class TestStudentService {
 
     @BeforeEach
     void setUp() {
+        studentRepository.deleteAll();
+
         dateTime = LocalDateTime.now();
 
         student = new Student();
@@ -43,14 +45,26 @@ public class TestStudentService {
         student.setClassesList(new ArrayList<>());
         student.setCreated_at(dateTime);
         student.setUpdated_at(dateTime);
-
-        studentRepository.deleteAll();
-        studentRepository.save(student);
     }
 
     @Test
     @Order(1)
+    void testSaveStudent() {
+        Student savedStudent = studentRepository.save(student);
+
+        assertNotNull(savedStudent.getId());
+        assertEquals(savedStudent.getFirstName(), student.getFirstName());
+        assertEquals(savedStudent.getLastName(), student.getLastName());
+
+        Optional<Student> foundStudent = studentRepository.findById(savedStudent.getId());
+        assertTrue(foundStudent.isPresent());
+
+    }
+
+    @Test
+    @Order(2)
     void testFindAllStudents() {
+        student = studentRepository.save(student);
         List<StudentResponseDTO> retrievedStudent = studentServices.findAll();
         assertNotNull(retrievedStudent);
         assertEquals(1, retrievedStudent.size());
@@ -65,8 +79,9 @@ public class TestStudentService {
     }
 
     @Test
-    @Order(2)
+    @Order(3)
     void testFindStudentById() {
+        student = studentRepository.save(student);
         assertNotNull(student.getId());
 
         StudentResponseDTO retrievedStudent = studentServices.findStudentById(student.getId());
@@ -77,4 +92,16 @@ public class TestStudentService {
         assertEquals(student.getLastName(), retrievedStudent.lastName());
         assertEquals(student.getIs_active(), retrievedStudent.is_active());
     }
+
+    @Test
+    @Order(4)
+    void testFindStudentByFirstName() {}
+
+    @Test
+    @Order(5)
+    void testUpdateStudent() {}
+
+    @Test
+    @Order(6)
+    void testDeleteStudent() {}
 }
