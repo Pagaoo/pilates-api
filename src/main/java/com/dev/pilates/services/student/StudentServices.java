@@ -13,6 +13,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -61,8 +62,10 @@ public class StudentServices {
             Student newStudent = studentRequestDTO.toStudent();
             Student savedStudent = studentRepository.save(newStudent);
             return savedStudent.toStudentRequestDTO();
+        } catch (HttpMessageNotReadableException e) {
+            throw new HttpMessageNotReadableException(e.getMessage());
         } catch (RuntimeException e) {
-            throw new CreatingEntityException("Erro ao salvar aluno");
+            throw new CreatingEntityException("Erro ao criar aluno");
         }
     }
 
