@@ -27,28 +27,32 @@ public class StudentServices {
         this.studentRepository = studentRepository;
     }
 
+    @Transactional(rollbackOn = RuntimeException.class)
     public List<StudentResponseDTO> findAll() {
         try {
             List<Student> students = studentRepository.findAll();
             return students.stream().map(Student::toStudentResponseDTO).collect(Collectors.toList());
         } catch (RuntimeException e) {
-            throw new EntityNotFoundException("Alunos não encontrado");
+            throw new EntityNotFoundException("Alunos não encontrados");
         }
     }
 
+    @Transactional(rollbackOn = RuntimeException.class)
     public StudentResponseDTO findStudentById(long id) {
         Student student = studentRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Aluno não encontrado"));
         return student.toStudentResponseDTO();
     }
 
+    @Transactional(rollbackOn = {RuntimeException.class, EntityNotFoundException.class})
     public List<StudentResponseDTO> findStudentsByName(String name) {
-        try {
-            Specification<Student> specification = StudentSpecifications.studentNameContainsIgnoreCase(name);
-            return studentRepository.findAll(specification).stream().map(Student::toStudentResponseDTO).collect(Collectors.toList());
-        } catch (RuntimeException e) {
-            throw new RuntimeException(e.getMessage());
+        Specification<Student> specification = StudentSpecifications.studentNameContainsIgnoreCase(name);
+        List<Student> students = studentRepository.findAll(specification);
+
+        if (students.isEmpty()) {
+            throw new EntityNotFoundException(String.format("Alunos com nome: %s não encontrados", name));
         }
+        return students.stream().map(Student::toStudentResponseDTO).collect(Collectors.toList());
     }
 
     @Transactional(rollbackOn = RuntimeException.class)
@@ -73,7 +77,8 @@ public class StudentServices {
             throw new RuntimeException("Erro de integridade ao tentar deletar aluno", e);
         }
     }
-    
+
+    @Transactional(rollbackOn = RuntimeException.class)
     public StudentRequestDTO updateStudentById(long id, StudentRequestDTO studentRequestDTO) {
         Student existingStudent = studentRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(String.format("Aluno de ID: %s não encontrado para atualizar", id)));
         try {
