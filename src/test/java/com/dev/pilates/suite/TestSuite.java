@@ -1,6 +1,7 @@
 package com.dev.pilates.suite;
 
 import com.dev.pilates.entities.*;
+import com.dev.pilates.services.TestStudentService;
 import org.junit.jupiter.api.*;
 
 @TestClassOrder(ClassOrderer.OrderAnnotation.class)
@@ -19,7 +20,7 @@ public class TestSuite {
     @Nested
     @Order(3)
     @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-    class studentTestNested extends StudentTest {}
+    class studentTestNested extends TestStudentService {}
 
     @Nested
     @Order(4)
