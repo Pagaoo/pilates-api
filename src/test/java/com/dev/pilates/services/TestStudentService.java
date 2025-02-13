@@ -1,5 +1,6 @@
 package com.dev.pilates.services;
 
+import com.dev.pilates.dtos.student.StudentRequestDTO;
 import com.dev.pilates.dtos.student.StudentResponseDTO;
 import com.dev.pilates.entities.Student;
 import com.dev.pilates.repositories.StudentRepository;
@@ -9,19 +10,20 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.test.context.ActiveProfiles;
+import org.springframework.data.jpa.domain.Specification;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-@ActiveProfiles("test")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class TestStudentService {
 
@@ -38,7 +40,8 @@ public class TestStudentService {
     void setUp() {
         students = List.of(
                 createStudent(1L,"John", "Doe", true),
-                createStudent(2L,"Jane", "Silver", false)
+                createStudent(2L,"Jane", "Silver", false),
+                createStudent(3L, "John", "Teste", true)
         );
 
     }
@@ -46,6 +49,18 @@ public class TestStudentService {
     @Test
     @Order(1)
     void testSaveStudent() {
+        StudentRequestDTO studentRequestDTO = students.get(0).toStudentRequestDTO();
+
+        when(studentRepository.save(any(Student.class))).thenReturn(students.get(0));
+
+        StudentRequestDTO savedStudent = studentServices.save(studentRequestDTO);
+
+        assertNotNull(savedStudent);
+        assertEquals("John", savedStudent.firstName());
+        assertEquals("Doe", savedStudent.lastName());
+        assertTrue(savedStudent.is_active());
+
+        verify(studentRepository).save(any(Student.class));
     }
 
     @Test
@@ -67,9 +82,11 @@ public class TestStudentService {
     @Test
     @Order(3)
     void testFindStudentById() {
-        when(studentRepository.findById(1L)).thenReturn(Optional.of(students.get(0)));
+        long idToFind = 1L;
 
-        StudentResponseDTO retrievedStudent = studentServices.findStudentById(1L);
+        when(studentRepository.findById(idToFind)).thenReturn(Optional.of(students.get(0)));
+
+        StudentResponseDTO retrievedStudent = studentServices.findStudentById(idToFind);
 
         assertNotNull(retrievedStudent);
         assertEquals(students.get(0).getFirstName(), retrievedStudent.firstName());
@@ -79,15 +96,56 @@ public class TestStudentService {
 
     @Test
     @Order(4)
-    void testFindStudentByFirstName() {}
+    void testFindStudentByFirstName() {
+        String nameToFilter = "John";
+        when(studentRepository.findAll(any(Specification.class)))
+                .thenReturn(students.stream()
+                .filter(student -> student.getFirstName().equals(nameToFilter))
+                .collect(Collectors.toList()));
+
+        long listSize = students.stream().filter(student -> student.getFirstName().equals(nameToFilter)).count();
+
+        List<StudentResponseDTO> retrievedStudents = studentServices.findStudentsByName(nameToFilter);
+
+        assertNotNull(retrievedStudents);
+        assertEquals(listSize, retrievedStudents.size());
+
+        for (StudentResponseDTO student : retrievedStudents) {
+            assertEquals(nameToFilter, student.firstName());
+        }
+    }
 
     @Test
     @Order(5)
-    void testUpdateStudent() {}
+    void testUpdateStudent() {
+        long studentIdToUpdate = 1L;
+        StudentRequestDTO studentRequestDTO = students.get((int) studentIdToUpdate).toStudentRequestDTO();
+
+        StudentRequestDTO studentToUpdate = new StudentRequestDTO("John", "troquei", true);
+
+        when(studentRepository.findById(studentIdToUpdate)).thenReturn(Optional.ofNullable(students.getFirst()));
+        when(studentRepository.save(any(Student.class))).thenReturn(studentToUpdate.toStudent());
+
+        StudentRequestDTO updatedStudent = studentServices.updateStudentById(studentIdToUpdate, studentRequestDTO);
+
+        assertNotNull(updatedStudent);
+        assertEquals(studentToUpdate.firstName(), updatedStudent.firstName());
+        assertEquals(studentToUpdate.lastName(), updatedStudent.lastName());
+        assertTrue(updatedStudent.is_active());
+
+        //é o save pq no final do metodo de update eu salvo o student
+        verify(studentRepository).save(any(Student.class));
+    }
 
     @Test
     @Order(6)
-    void testDeleteStudent() {}
+    void testDeleteStudent() {
+        long idToDelete = 1L;
+        //não passando o when pois o metodo delete é void
+
+        studentRepository.deleteById(idToDelete);
+        verify(studentRepository).deleteById(idToDelete);
+    }
 
     private Student createStudent(Long id, String firstName, String lastName, boolean isActive) {
         Student student = new Student();
