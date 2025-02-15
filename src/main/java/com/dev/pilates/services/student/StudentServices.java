@@ -71,14 +71,10 @@ public class StudentServices {
 
     public void deleteStudentById(long id) {
         Student studentToBeDeleted = studentRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Aluno não encontrado"));
-        try {
-            for (Classes classes : studentToBeDeleted.getClassesList()) {
-                classes.getStudents().remove(studentToBeDeleted);
-            }
-            studentRepository.deleteById(id);
-        } catch (DataIntegrityViolationException e) {
-            throw new RuntimeException("Erro de integridade ao tentar deletar aluno", e);
+        for (Classes classes : studentToBeDeleted.getClassesList()) {
+            classes.getStudents().remove(studentToBeDeleted);
         }
+        studentRepository.deleteById(id);
     }
 
     @Transactional(rollbackOn = RuntimeException.class)
