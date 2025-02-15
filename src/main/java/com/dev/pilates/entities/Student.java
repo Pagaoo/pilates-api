@@ -5,6 +5,8 @@ import com.dev.pilates.dtos.student.StudentResponseDTO;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -28,12 +30,15 @@ public class Student {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(length = 50, nullable = false)
-    @NotBlank
+    @NotBlank(message = "O primeiro nome não pode estar vazio")
+    @Size(min = 3, message = "O primeiro nome tem que ter no minímo 3 caracteres.")
     private String firstName;
     @Column(length = 50, nullable = false)
-    @NotBlank
+    @NotBlank(message = "O sobrenome não pode estar vazio")
+    @Size(min = 3, message = "O sobrenome tem que ter no minímo 3 caracteres.")
     private String lastName;
     @Column(nullable = false)
+    @NotNull(message = "O status do aluno não pode estar vazio")
     private Boolean is_active;
     @ManyToMany(mappedBy = "students")
     private List<Classes> classesList;

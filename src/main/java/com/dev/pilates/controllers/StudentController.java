@@ -51,7 +51,7 @@ public class StudentController {
 
     @PreAuthorize(value = "hasAnyRole('ROLE_ADMIN', 'ROLE_PROFESSOR')")
     @PatchMapping("/{id}")
-    public ResponseEntity<StudentRequestDTO> updateStudent(@PathVariable @RequestBody Long id, StudentRequestDTO student) {
+    public ResponseEntity<StudentRequestDTO> updateStudent(@PathVariable Long id, @Valid @RequestBody StudentRequestDTO student) {
         StudentRequestDTO studentToBeUpdated = studentServices.updateStudentById(id, student);
         return ResponseEntity.ok(studentToBeUpdated);
     }

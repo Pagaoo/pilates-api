@@ -117,7 +117,7 @@ public class TestStudentService {
 
     @Test
     @Order(5)
-    void testUpdateStudent() {
+    void testUpdateStudent() throws Exception {
         long studentIdToUpdate = 1L;
         StudentRequestDTO studentRequestDTO = students.get((int) studentIdToUpdate).toStudentRequestDTO();
 
