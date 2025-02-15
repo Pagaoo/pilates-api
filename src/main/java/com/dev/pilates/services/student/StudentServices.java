@@ -9,6 +9,7 @@ import com.dev.pilates.repositories.StudentRepository;
 import com.dev.pilates.specifications.StudentSpecifications;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
+import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Valid;
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -79,14 +80,20 @@ public class StudentServices {
 
     @Transactional(rollbackOn = RuntimeException.class)
     public StudentRequestDTO updateStudentById(long id, StudentRequestDTO studentRequestDTO) {
-        Student existingStudent = studentRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(String.format("Aluno de ID: %s não encontrado para atualizar", id)));
+        Student existingStudent = studentRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Aluno não encontrado para atualizar"));
         try {
             BeanUtils.copyProperties(studentRequestDTO, existingStudent, "id", "created_at");
             existingStudent.setUpdated_at(LocalDateTime.now());
             Student updateStudent = studentRepository.save(existingStudent);
             return updateStudent.toStudentRequestDTO();
-        } catch(RuntimeException e) {
-            throw new RuntimeException("Erro ao atualizar aluno", e);
+        } catch(IllegalArgumentException e) {
+            throw new CreatingEntityException("Erro ao processar os dados do aluno. Verifique as informações");
+        } catch (DataIntegrityViolationException e) {
+            throw new CreatingEntityException("Erro ao salvar os dados do aluno. Alguma informação pode estar vazia, duplicada ou inválida");
+        } catch (HttpMessageNotReadableException e) {
+            throw new HttpMessageNotReadableException(e.getMessage());
+        } catch (Exception e) {
+            throw new RuntimeException("Ocorreu um erro inesperado ao atualizar o aluno. Tente novamente mais tarde");
         }
     }
 }
