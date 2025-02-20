@@ -9,12 +9,11 @@ import com.dev.pilates.repositories.StudentRepository;
 import com.dev.pilates.specifications.StudentSpecifications;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
-import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Valid;
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.http.converter.HttpMessageConversionException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -63,8 +62,8 @@ public class StudentServices {
             Student newStudent = studentRequestDTO.toStudent();
             Student savedStudent = studentRepository.save(newStudent);
             return savedStudent.toStudentRequestDTO();
-        } catch (HttpMessageNotReadableException e) {
-            throw new HttpMessageNotReadableException(e.getMessage());
+        } catch (HttpMessageConversionException e) {
+            throw new HttpMessageConversionException(e.getMessage());
         } catch (RuntimeException e) {
             throw new CreatingEntityException("Erro ao criar aluno");
         }
@@ -90,8 +89,8 @@ public class StudentServices {
             throw new CreatingEntityException("Erro ao processar os dados do aluno. Verifique as informações");
         } catch (DataIntegrityViolationException e) {
             throw new CreatingEntityException("Erro ao salvar os dados do aluno. Alguma informação pode estar vazia, duplicada ou inválida");
-        } catch (HttpMessageNotReadableException e) {
-            throw new HttpMessageNotReadableException(e.getMessage());
+        } catch (HttpMessageConversionException e) {
+            throw new HttpMessageConversionException(e.getMessage());
         } catch (Exception e) {
             throw new RuntimeException("Ocorreu um erro inesperado ao atualizar o aluno. Tente novamente mais tarde");
         }

@@ -43,7 +43,6 @@ public class TestStudentService {
                 createStudent(2L,"Jane", "Silver", false),
                 createStudent(3L, "John", "Teste", true)
         );
-
     }
 
     @Test
@@ -65,6 +64,11 @@ public class TestStudentService {
 
     @Test
     @Order(2)
+    void testSaveStudentWithNullFirstName() {
+    }
+
+    @Test
+    @Order(3)
     void testFindAllStudents() {
         when(studentRepository.findAll()).thenReturn(students);
         List<StudentResponseDTO> results = studentServices.findAll();
@@ -80,7 +84,7 @@ public class TestStudentService {
     }
 
     @Test
-    @Order(3)
+    @Order(4)
     void testFindStudentById() {
         long idToFind = 1L;
 
@@ -95,7 +99,7 @@ public class TestStudentService {
     }
 
     @Test
-    @Order(4)
+    @Order(5)
     void testFindStudentByFirstName() {
         String nameToFilter = "John";
         when(studentRepository.findAll(any(Specification.class)))
@@ -116,8 +120,8 @@ public class TestStudentService {
     }
 
     @Test
-    @Order(5)
-    void testUpdateStudent() throws Exception {
+    @Order(6)
+    void testUpdateStudent() {
         long studentIdToUpdate = 1L;
         StudentRequestDTO studentRequestDTO = students.get((int) studentIdToUpdate).toStudentRequestDTO();
 
@@ -138,7 +142,7 @@ public class TestStudentService {
     }
 
     @Test
-    @Order(6)
+    @Order(7)
     void testDeleteStudent() {
         long idToDelete = 1L;
         //não passando o when pois o metodo delete é void
