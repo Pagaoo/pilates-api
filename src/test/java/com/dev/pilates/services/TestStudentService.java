@@ -166,6 +166,22 @@ public class TestStudentService {
 
     @Test
     @Order(9)
+    void shouldThrowEntityNotFoundException_whenStudentNotFoundByFirstName() {
+        String nameToFilter = "TESTE";
+        when(studentRepository.findAll(any(Specification.class)))
+                .thenReturn(students
+                        .stream()
+                        .filter(student -> student.getFirstName().equals(nameToFilter))
+                        .collect(Collectors.toList()));
+
+        EntityNotFoundException exception =
+                assertThrows(EntityNotFoundException.class, () -> studentServices.findStudentsByName(nameToFilter));
+
+        assertEquals("Alunos com nome: TESTE não encontrados", exception.getMessage());
+    }
+
+    @Test
+    @Order(9)
     void testUpdateStudent() {
         long studentIdToUpdate = 1L;
         StudentRequestDTO studentRequestDTO = students.get((int) studentIdToUpdate).toStudentRequestDTO();
