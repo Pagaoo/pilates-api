@@ -12,6 +12,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.converter.HttpMessageConversionException;
 
@@ -181,7 +182,7 @@ public class TestStudentService {
     }
 
     @Test
-    @Order(9)
+    @Order(10)
     void testUpdateStudent() {
         long studentIdToUpdate = 1L;
         StudentRequestDTO studentRequestDTO = students.get((int) studentIdToUpdate).toStudentRequestDTO();
@@ -203,7 +204,70 @@ public class TestStudentService {
     }
 
     @Test
-    @Order(10)
+    @Order(11)
+    void shouldThrowEntityNotFound_whenNotFindingStudentToBeUpdated() {
+        long id = 1L;
+        StudentRequestDTO studentRequestDTO = new StudentRequestDTO("John", "troquei", true);
+        when(studentRepository.findById(id)).thenReturn(Optional.empty());
+
+        EntityNotFoundException exception =
+                assertThrows(EntityNotFoundException.class, () -> studentServices.updateStudentById(id, studentRequestDTO));
+
+        assertEquals("Aluno não encontrado para atualizar", exception.getMessage());
+    }
+
+    @Test
+    @Order(12)
+    void shouldThrowCreatingEntityException_whenCopyPropertiesFails() {
+        long id = 1L;
+        StudentRequestDTO studentRequestDTO = new StudentRequestDTO("John", "troquei", true);
+        Student existingStudent = students.get(0);
+
+        when(studentRepository.findById(id)).thenReturn(Optional.of(existingStudent));
+
+        doThrow(IllegalArgumentException.class)
+                .when(studentRepository).save(any(Student.class));
+
+        CreatingEntityException exception =
+                assertThrows(CreatingEntityException.class, () -> studentServices.updateStudentById(id, studentRequestDTO));
+        assertEquals("Erro ao processar os dados do aluno. Verifique as informações", exception.getMessage());
+    }
+
+    @Test
+    @Order(13)
+    void shouldThrowCreatingEntityException_whenDataIntegrityViolationOccurs() {
+        long id = 1L;
+        StudentRequestDTO studentRequestDTO = new StudentRequestDTO("John", "troquei", true);
+        Student existingStudent = students.get(0);
+
+       when(studentRepository.findById(id)).thenReturn(Optional.of(existingStudent));
+       when(studentRepository.save(existingStudent))
+               .thenThrow(DataIntegrityViolationException.class);
+
+       CreatingEntityException exception =
+               assertThrows(CreatingEntityException.class, () -> studentServices.updateStudentById(id, studentRequestDTO));
+
+       assertEquals("Erro ao salvar os dados do aluno. Alguma informação pode estar vazia, duplicada ou inválida", exception.getMessage());
+    }
+
+    @Test
+    @Order(14)
+    void shouldThrowRuntimeException_whenUnexpectedErrorOccurs() {
+        long id = 1L;
+        StudentRequestDTO studentRequestDTO = new StudentRequestDTO("John", "troquei", true);
+        Student existingStudent = students.get(0);
+
+        when(studentRepository.findById(id)).thenReturn(Optional.of(existingStudent));
+        when(studentRepository.save(existingStudent)).thenThrow(RuntimeException.class);
+
+        RuntimeException exception =
+                assertThrows(RuntimeException.class, () -> studentServices.updateStudentById(id, studentRequestDTO));
+
+        assertEquals("Ocorreu um erro inesperado ao atualizar o aluno. Tente novamente mais tarde", exception.getMessage());
+    }
+
+    @Test
+    @Order(15)
     void testDeleteStudent() {
         long idToDelete = 1L;
         //não passando o when pois o metodo delete é void
