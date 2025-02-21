@@ -6,6 +6,7 @@ import com.dev.pilates.entities.Student;
 import com.dev.pilates.exceptions.CreatingEntityException;
 import com.dev.pilates.repositories.StudentRepository;
 import com.dev.pilates.services.student.StudentServices;
+import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -107,6 +108,17 @@ public class TestStudentService {
 
     @Test
     @Order(5)
+    void shouldThrowEntityNotFoundException_whenStudentsNotFound() {
+        when(studentRepository.findAll()).thenThrow(new RuntimeException("Alunos não encontrados"));
+
+        EntityNotFoundException exception =
+                assertThrows(EntityNotFoundException.class, () -> studentServices.findAll());
+
+        assertEquals("Alunos não encontrados", exception.getMessage());
+    }
+
+    @Test
+    @Order(6)
     void testFindStudentById() {
         long idToFind = 1L;
 
@@ -121,7 +133,7 @@ public class TestStudentService {
     }
 
     @Test
-    @Order(6)
+    @Order(7)
     void testFindStudentByFirstName() {
         String nameToFilter = "John";
         when(studentRepository.findAll(any(Specification.class)))
@@ -142,7 +154,7 @@ public class TestStudentService {
     }
 
     @Test
-    @Order(7)
+    @Order(8)
     void testUpdateStudent() {
         long studentIdToUpdate = 1L;
         StudentRequestDTO studentRequestDTO = students.get((int) studentIdToUpdate).toStudentRequestDTO();
@@ -164,7 +176,7 @@ public class TestStudentService {
     }
 
     @Test
-    @Order(8)
+    @Order(9)
     void testDeleteStudent() {
         long idToDelete = 1L;
         //não passando o when pois o metodo delete é void
