@@ -134,6 +134,17 @@ public class TestStudentService {
 
     @Test
     @Order(7)
+    void shouldThrowEntityNotFoundException_whenStudentNotFoundById() {
+        when(studentRepository.findById(1L)).thenReturn(Optional.empty());
+
+        EntityNotFoundException exception =
+                assertThrows(EntityNotFoundException.class, () -> studentServices.findStudentById(1L));
+
+        assertEquals("Aluno não encontrado", exception.getMessage());
+    }
+
+    @Test
+    @Order(8)
     void testFindStudentByFirstName() {
         String nameToFilter = "John";
         when(studentRepository.findAll(any(Specification.class)))
@@ -154,7 +165,7 @@ public class TestStudentService {
     }
 
     @Test
-    @Order(8)
+    @Order(9)
     void testUpdateStudent() {
         long studentIdToUpdate = 1L;
         StudentRequestDTO studentRequestDTO = students.get((int) studentIdToUpdate).toStudentRequestDTO();
@@ -176,7 +187,7 @@ public class TestStudentService {
     }
 
     @Test
-    @Order(9)
+    @Order(10)
     void testDeleteStudent() {
         long idToDelete = 1L;
         //não passando o when pois o metodo delete é void
